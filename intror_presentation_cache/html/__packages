@@ -1,0 +1,16 @@
+base
+carData
+car
+tidyverse
+ggplot2
+tibble
+tidyr
+readr
+purrr
+dplyr
+stringr
+forcats
+ggfortify
+magrittr
+ggpubr
+emmeans

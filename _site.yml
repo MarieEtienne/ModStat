@@ -1,0 +1,40 @@
+name: "Statistique pour l'halieutique"
+output_dir: "docs"
+navbar:
+  logo:
+  title: 'Modélsation statistique'
+  left:
+  - text: "dépôt github"
+    icon: fa-github
+    href: https://github.com/MarieEtienne/ModStat
+  right:
+  - text: "Présentation"
+    href: index.html
+  - text: "Introduction à R"
+    icon: fa-child
+    menu:
+      - text: "Présentation du logiciel R"
+        href: intror_presentation.html
+      - text: "Environnement RStudio"
+        href: intror_rstudio.html
+      - text: "Manipulation de données"
+        href: intror_manip.html
+      - text: "Visualisation"
+        href: intror_visu.html
+  - text: "Modélisation statistique"
+    icon: fa-tilde
+    menu:
+      - text: "Modèle de comparaison de moyennes"
+        href: Comp_moyenne.html
+      - text: "Modèle d'analyse de variance"
+        href: anova2.html
+      - text: "Modèle de régression linéaire"
+        href: Regression_usAir.html
+     
+      
+output:
+  html_document:
+    theme: lumen
+    highlight: haddock
+
+    

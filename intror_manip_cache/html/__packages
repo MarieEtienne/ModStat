@@ -1,0 +1,7 @@
+base
+tibble
+tidyr
+stringr
+purrr
+dplyr
+readxl

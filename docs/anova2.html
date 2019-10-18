@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Marie-Pierre Etienne" />
+
+<meta name="date" content="2018-10-16" />
+
+<title>Anova 2 facteurs : étude de la fréquence cardiaque</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Modélsation statistique</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="https://github.com/MarieEtienne/ModStat">
+    <span class="fa fa-github"></span>
+     
+    dépôt github
+  </a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="index.html">Présentation</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fa fa-child"></span>
+     
+    Introduction à R
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="intror_presentation.html">Présentation du logiciel R</a>
+    </li>
+    <li>
+      <a href="intror_rstudio.html">Environnement RStudio</a>
+    </li>
+    <li>
+      <a href="intror_manip.html">Manipulation de données</a>
+    </li>
+    <li>
+      <a href="intror_visu.html">Visualisation</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fa fa-tilde"></span>
+     
+    Modélisation statistique
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Comp_moyenne.html">Modèle de comparaison de moyennes</a>
+    </li>
+    <li>
+      <a href="anova2.html">Modèle d'analyse de variance</a>
+    </li>
+    <li>
+      <a href="Regression_usAir.html">Modèle de régression linéaire</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Anova 2 facteurs : étude de la fréquence cardiaque</h1>
+<h4 class="author">Marie-Pierre Etienne</h4>
+<h4 class="date">October 16, 2018</h4>
+
+</div>
+
+
+<p>Les packages utiles pour cet exemple sont</p>
+<pre class="r"><code>#pour la fonction Anova
+library(car)</code></pre>
+<pre><code>## Loading required package: carData</code></pre>
+<pre class="r"><code># pour le tidyverse
+library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ───────────────────────────────── tidyverse 1.2.1 ──</code></pre>
+<pre><code>## ✔ ggplot2 3.2.1     ✔ purrr   0.3.2
+## ✔ tibble  2.1.3     ✔ dplyr   0.8.3
+## ✔ tidyr   0.8.3     ✔ stringr 1.4.0
+## ✔ readr   1.3.1     ✔ forcats 0.4.0</code></pre>
+<pre><code>## ── Conflicts ──────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()
+## ✖ dplyr::recode() masks car::recode()
+## ✖ purrr::some()   masks car::some()</code></pre>
+<pre class="r"><code># pour les graphiques
+library(ggplot2) 
+library(ggfortify)
+library(ggpubr)</code></pre>
+<pre><code>## Loading required package: magrittr</code></pre>
+<pre><code>## 
+## Attaching package: &#39;magrittr&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:purrr&#39;:
+## 
+##     set_names</code></pre>
+<pre><code>## The following object is masked from &#39;package:tidyr&#39;:
+## 
+##     extract</code></pre>
+<pre class="r"><code># pour les moyennes ajustées
+library(emmeans) </code></pre>
+<p>#Présentation</p>
+<p>On a enregistré pour 40 personnes, leur fréquence cardiaque au repos. On a noté pour chacune d’entre elles un niveau d’activité physique moyen ainsi que leur sexe. La variable sport varie de 1, très sportif, à 5 très sédentaire.</p>
+<pre class="r"><code>freq &lt;- read.table(&quot;data/FreqCardiaqueEq.txt&quot;, skip=1, header=T, sep=&quot; &quot;) 
+summary(freq)</code></pre>
+<pre><code>##      freqC           Sport   Sexe  
+##  Min.   :76.00   Min.   :1   F:20  
+##  1st Qu.:81.75   1st Qu.:2   M:20  
+##  Median :84.00   Median :3         
+##  Mean   :84.45   Mean   :3         
+##  3rd Qu.:87.00   3rd Qu.:4         
+##  Max.   :93.00   Max.   :5</code></pre>
+<pre class="r"><code>freq &lt;- freq %&gt;% mutate(Sport_fac = as.factor(Sport))
+summary(freq)</code></pre>
+<pre><code>##      freqC           Sport   Sexe   Sport_fac
+##  Min.   :76.00   Min.   :1   F:20   1:8      
+##  1st Qu.:81.75   1st Qu.:2   M:20   2:8      
+##  Median :84.00   Median :3          3:8      
+##  Mean   :84.45   Mean   :3          4:8      
+##  3rd Qu.:87.00   3rd Qu.:4          5:8      
+##  Max.   :93.00   Max.   :5</code></pre>
+<p>#Etude descriptive des données</p>
+<p>Plan d’expérience :</p>
+<pre class="r"><code>with( freq,
+      table(Sexe, Sport)
+      )</code></pre>
+<pre><code>##     Sport
+## Sexe 1 2 3 4 5
+##    F 4 4 4 4 4
+##    M 4 4 4 4 4</code></pre>
+<pre class="r"><code># ou en mode tidy
+freq %&gt;% count(Sexe, Sport)</code></pre>
+<pre><code>## # A tibble: 10 x 3
+##    Sexe  Sport     n
+##    &lt;fct&gt; &lt;int&gt; &lt;int&gt;
+##  1 F         1     4
+##  2 F         2     4
+##  3 F         3     4
+##  4 F         4     4
+##  5 F         5     4
+##  6 M         1     4
+##  7 M         2     4
+##  8 M         3     4
+##  9 M         4     4
+## 10 M         5     4</code></pre>
+<p>Moyennes et écart-types par groupes :</p>
+<pre class="r"><code>freq %&gt;% group_by(Sexe) %&gt;% summarise(mean_freq = mean(freqC))</code></pre>
+<pre><code>## # A tibble: 2 x 2
+##   Sexe  mean_freq
+##   &lt;fct&gt;     &lt;dbl&gt;
+## 1 F          84.3
+## 2 M          84.6</code></pre>
+<pre class="r"><code>freq %&gt;% group_by(Sport) %&gt;% summarise(mean_freq = mean(freqC))</code></pre>
+<pre><code>## # A tibble: 5 x 2
+##   Sport mean_freq
+##   &lt;int&gt;     &lt;dbl&gt;
+## 1     1      80.1
+## 2     2      81.8
+## 3     3      84.8
+## 4     4      85.5
+## 5     5      90.1</code></pre>
+<pre class="r"><code>freq %&gt;% group_by(Sexe, Sport) %&gt;% summarise(mean_freq = mean(freqC))</code></pre>
+<pre><code>## # A tibble: 10 x 3
+## # Groups:   Sexe [2]
+##    Sexe  Sport mean_freq
+##    &lt;fct&gt; &lt;int&gt;     &lt;dbl&gt;
+##  1 F         1      81  
+##  2 F         2      82.5
+##  3 F         3      82.5
+##  4 F         4      85.8
+##  5 F         5      89.8
+##  6 M         1      79.2
+##  7 M         2      81  
+##  8 M         3      87  
+##  9 M         4      85.2
+## 10 M         5      90.5</code></pre>
+<pre class="r"><code>p1 &lt;- ggplot(freq, aes(y=freqC, x = Sport_fac)) + geom_boxplot()
+  
+p2 &lt;- ggplot(freq, aes(y=freqC, x = Sexe)) + geom_boxplot()
+
+ggarrange(p1,p2+rremove(&#39;ylab&#39;))</code></pre>
+<p><img src="anova2_files/figure-html/anova_moy-1.png" width="672" /></p>
+<div id="anova-1-facteur" class="section level1">
+<h1>Anova 1 facteur</h1>
+<p>Question : ``Y a-t-il un effet de la pratique sportive sur la frequence cardiaque au repos ?’’</p>
+<p>Ajustement du modèle :</p>
+<pre class="r"><code> lm_1 &lt;- lm( freqC ~ Sport, data = freq)</code></pre>
+<p>Estimation et test sur les paramètres</p>
+<pre class="r"><code>summary(lm_1)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = freqC ~ Sport, data = freq)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -3.7000 -1.5438 -0.1375  1.6125  3.8000 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  77.3250     0.7719  100.18  &lt; 2e-16 ***
+## Sport         2.3750     0.2327   10.21 1.94e-12 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 2.082 on 38 degrees of freedom
+## Multiple R-squared:  0.7327, Adjusted R-squared:  0.7256 
+## F-statistic: 104.1 on 1 and 38 DF,  p-value: 1.936e-12</code></pre>
+<p>Oh mais ça n’est pas une analyse de variance. Quelle andouille j’ai oublié d’utiliser Sport_fac plutôt que Sport. Je recommence.</p>
+<p>Ajustement du modèle :</p>
+<pre class="r"><code> lm_1 &lt;- lm( freqC ~ Sport_fac, data = freq)</code></pre>
+<p>Estimation et test sur les paramètres</p>
+<pre class="r"><code>summary(lm_1)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = freqC ~ Sport_fac, data = freq)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -4.125 -1.562 -0.125  1.500  3.250 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   80.125      0.709 113.012  &lt; 2e-16 ***
+## Sport_fac2     1.625      1.003   1.621    0.114    
+## Sport_fac3     4.625      1.003   4.613 5.14e-05 ***
+## Sport_fac4     5.375      1.003   5.361 5.38e-06 ***
+## Sport_fac5    10.000      1.003   9.973 9.09e-12 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 2.005 on 35 degrees of freedom
+## Multiple R-squared:  0.7715, Adjusted R-squared:  0.7454 
+## F-statistic: 29.54 on 4 and 35 DF,  p-value: 8.766e-11</code></pre>
+<p>La matrice de design</p>
+<pre class="r"><code>model.matrix(lm_1)</code></pre>
+<pre><code>##    (Intercept) Sport_fac2 Sport_fac3 Sport_fac4 Sport_fac5
+## 1            1          0          0          0          0
+## 2            1          0          0          0          0
+## 3            1          0          0          0          0
+## 4            1          0          0          0          0
+## 5            1          0          0          0          0
+## 6            1          0          0          0          0
+## 7            1          0          0          0          0
+## 8            1          0          0          0          0
+## 9            1          1          0          0          0
+## 10           1          1          0          0          0
+## 11           1          1          0          0          0
+## 12           1          1          0          0          0
+## 13           1          1          0          0          0
+## 14           1          1          0          0          0
+## 15           1          1          0          0          0
+## 16           1          1          0          0          0
+## 17           1          0          1          0          0
+## 18           1          0          1          0          0
+## 19           1          0          1          0          0
+## 20           1          0          1          0          0
+## 21           1          0          1          0          0
+## 22           1          0          1          0          0
+## 23           1          0          1          0          0
+## 24           1          0          1          0          0
+## 25           1          0          0          1          0
+## 26           1          0          0          1          0
+## 27           1          0          0          1          0
+## 28           1          0          0          1          0
+## 29           1          0          0          1          0
+## 30           1          0          0          1          0
+## 31           1          0          0          1          0
+## 32           1          0          0          1          0
+## 33           1          0          0          0          1
+## 34           1          0          0          0          1
+## 35           1          0          0          0          1
+## 36           1          0          0          0          1
+## 37           1          0          0          0          1
+## 38           1          0          0          0          1
+## 39           1          0          0          0          1
+## 40           1          0          0          0          1
+## attr(,&quot;assign&quot;)
+## [1] 0 1 1 1 1
+## attr(,&quot;contrasts&quot;)
+## attr(,&quot;contrasts&quot;)$Sport_fac
+## [1] &quot;contr.treatment&quot;</code></pre>
+<p>Dans le modèle linéaire <span class="math inline">\(Y=X\theta +E\)</span>, l’estimation des paramètres est donnée par</p>
+<p><span class="math display">\[ \hat{\theta} = (X^\prime X )^{-1} X^\prime  Y.\]</span></p>
+<p>On peut retrouver les valeurs estimées sur cet exemple</p>
+<pre class="r"><code>Y &lt;- matrix(freq$freqC, ncol = 1)
+X &lt;- model.matrix(lm_1)
+Xprime &lt;- t(X)
+
+solve(Xprime %*% X) %*%  Xprime %*% Y</code></pre>
+<pre><code>##               [,1]
+## (Intercept) 80.125
+## Sport_fac2   1.625
+## Sport_fac3   4.625
+## Sport_fac4   5.375
+## Sport_fac5  10.000</code></pre>
+<p>La loi de l’estimateur <span class="math inline">\(T\)</span> correspondant est donné par</p>
+<p><span class="math display">\[T\sim\mathcal{N}\left( \theta, \sigma^2 (X^\prime X)^{-1} \right)\]</span></p>
+<div id="test-de-leffet-global-du-niveau-dactivite-sportive-." class="section level2">
+<h2>Test de l’effet global du niveau d’activité sportive .</h2>
+<pre class="r"><code>anova(lm_1)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Response: freqC
+##           Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+## Sport_fac  4 475.15 118.788  29.539 8.766e-11 ***
+## Residuals 35 140.75   4.021                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</div>
+<div id="verification-des-hypotheses" class="section level2">
+<h2>Vérification des hypothèses</h2>
+<pre class="r"><code>autoplot(lm_1, data = freq)</code></pre>
+<p><img src="anova2_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+</div>
+</div>
+<div id="anova-deux-facteurs-plan-equilibre" class="section level1">
+<h1>Anova deux facteurs, plan équilibré</h1>
+<p>Question : ``Y a-t-il un effet de la pratique sportive ou du sexe sur la frequence cardiaque au repos ?’’</p>
+<div id="etude-des-interactions" class="section level2">
+<h2>Etude des interactions</h2>
+<pre class="r"><code>freq %&gt;% 
+  ggplot() +
+  aes(x = Sport_fac, color = Sexe, group = Sexe, y = freqC) +
+  stat_summary(fun.y = mean, geom = &quot;point&quot;) +
+  stat_summary(fun.y = mean, geom = &quot;line&quot;)</code></pre>
+<p><img src="anova2_files/figure-html/anova_interaction-1.png" width="672" /></p>
+<p>Modèle avec interaction :</p>
+<pre class="r"><code> lmInt &lt;- lm(freqC~Sexe+Sport+Sexe*Sport, data=freq)
+ summary(lmInt)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = freqC ~ Sexe + Sport + Sexe * Sport, data = freq)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -3.300 -1.319 -0.325  1.600  4.550 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  78.0750     1.0936  71.395  &lt; 2e-16 ***
+## SexeM        -1.5000     1.5465  -0.970    0.339    
+## Sport         2.0750     0.3297   6.293 2.82e-07 ***
+## SexeM:Sport   0.6000     0.4663   1.287    0.206    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 2.085 on 36 degrees of freedom
+## Multiple R-squared:  0.7458, Adjusted R-squared:  0.7246 
+## F-statistic: 35.21 on 3 and 36 DF,  p-value: 8.35e-11</code></pre>
+<pre class="r"><code> lmInt &lt;- lm(freqC~Sexe+Sport_fac+Sexe*Sport_fac, data=freq)
+ summary(lmInt)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = freqC ~ Sexe + Sport_fac + Sexe * Sport_fac, data = freq)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+##  -3.25  -1.00   0.00   1.00   3.75 
+## 
+## Coefficients:
+##                  Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)       81.0000     0.8563  94.588  &lt; 2e-16 ***
+## SexeM             -1.7500     1.2111  -1.445 0.158819    
+## Sport_fac2         1.5000     1.2111   1.239 0.225104    
+## Sport_fac3         1.5000     1.2111   1.239 0.225104    
+## Sport_fac4         4.7500     1.2111   3.922 0.000473 ***
+## Sport_fac5         8.7500     1.2111   7.225 4.84e-08 ***
+## SexeM:Sport_fac2   0.2500     1.7127   0.146 0.884923    
+## SexeM:Sport_fac3   6.2500     1.7127   3.649 0.000991 ***
+## SexeM:Sport_fac4   1.2500     1.7127   0.730 0.471147    
+## SexeM:Sport_fac5   2.5000     1.7127   1.460 0.154770    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 1.713 on 30 degrees of freedom
+## Multiple R-squared:  0.8571, Adjusted R-squared:  0.8143 
+## F-statistic:    20 on 9 and 30 DF,  p-value: 2.327e-10</code></pre>
+<p>Question : <code>Y a-t-il un effet de la pratique sportive  sur la fréquence cardiaque au repos ?'' \\ Question :</code>Y a-t-il un effet du sexe sur la fréquence cardiaque au repos ?’’</p>
+<p>Question : ``Y a-t-il un effet du sexe en interaction avec la pratique sportive sur la fréquence cardiaque au repos ?’’</p>
+<pre class="r"><code> anova(lmInt)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Response: freqC
+##                Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+## Sexe            1   0.90   0.900  0.3068  0.583745    
+## Sport_fac       4 475.15 118.787 40.4957 1.105e-11 ***
+## Sexe:Sport_fac  4  51.85  12.962  4.4190  0.006299 ** 
+## Residuals      30  88.00   2.933                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code> Anova(lmInt, type=&quot;II&quot;)</code></pre>
+<pre><code>## Anova Table (Type II tests)
+## 
+## Response: freqC
+##                Sum Sq Df F value    Pr(&gt;F)    
+## Sexe             0.90  1  0.3068  0.583745    
+## Sport_fac      475.15  4 40.4957 1.105e-11 ***
+## Sexe:Sport_fac  51.85  4  4.4190  0.006299 ** 
+## Residuals       88.00 30                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>autoplot(lmInt, data = freq)</code></pre>
+<p><img src="anova2_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>Modèle sans interaction :</p>
+<pre class="r"><code> lm1 &lt;- lm(freqC~Sexe+Sport_fac, data=freq)
+ summary(lm1)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = freqC ~ Sexe + Sport_fac, data = freq)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -4.275 -1.600 -0.125  1.462  3.100 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  79.9750     0.7855 101.816  &lt; 2e-16 ***
+## SexeM         0.3000     0.6413   0.468    0.643    
+## Sport_fac2    1.6250     1.0141   1.602    0.118    
+## Sport_fac3    4.6250     1.0141   4.561 6.32e-05 ***
+## Sport_fac4    5.3750     1.0141   5.300 6.99e-06 ***
+## Sport_fac5   10.0000     1.0141   9.861 1.67e-11 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 2.028 on 34 degrees of freedom
+## Multiple R-squared:  0.7729, Adjusted R-squared:  0.7395 
+## F-statistic: 23.15 on 5 and 34 DF,  p-value: 4.63e-10</code></pre>
+<p>Question : <code>Y a-t-il un effet de la pratique sportive  sur la fréquence cardiaque au repos ?''\\ Question :</code>Y a-t-il un effet du sexe sur la fréquence cardiaque au repos ?’’</p>
+<pre class="r"><code> anova(lm1)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Response: freqC
+##           Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+## Sexe       1   0.90   0.900  0.2188    0.6429    
+## Sport_fac  4 475.15 118.787 28.8793 1.643e-10 ***
+## Residuals 34 139.85   4.113                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code> Anova(lm1, type=&quot;II&quot;)</code></pre>
+<pre><code>## Anova Table (Type II tests)
+## 
+## Response: freqC
+##           Sum Sq Df F value    Pr(&gt;F)    
+## Sexe        0.90  1  0.2188    0.6429    
+## Sport_fac 475.15  4 28.8793 1.643e-10 ***
+## Residuals 139.85 34                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>autoplot(lm1)</code></pre>
+<p><img src="anova2_files/figure-html/anova_lmout_test-1.png" width="672" /></p>
+</div>
+</div>
+<div id="anova-deux-facteurs-plan-desequilibre" class="section level1">
+<h1>Anova deux facteurs, plan déséquilibré</h1>
+<pre class="r"><code> freq2 &lt;- read.table(file = &quot;data/FreqCardiaqueDes1.txt&quot;, header = T)
+freq2 &lt;- freq2 %&gt;% mutate(Sport_fac = as.factor(Sport))
+
+freq2 %&gt;% count(Sport, Sexe) </code></pre>
+<pre><code>## # A tibble: 10 x 3
+##    Sport Sexe      n
+##    &lt;int&gt; &lt;fct&gt; &lt;int&gt;
+##  1     1 F         6
+##  2     1 M         3
+##  3     2 F         3
+##  4     2 M         2
+##  5     3 F         5
+##  6     3 M         6
+##  7     4 F         3
+##  8     4 M         5
+##  9     5 F         2
+## 10     5 M         5</code></pre>
+<p>Moyennes et écart-types par groupes :</p>
+<pre class="r"><code>freq2 %&gt;% group_by(Sport) %&gt;% summarise(mean_freq = mean(freqC)) </code></pre>
+<pre><code>## # A tibble: 5 x 2
+##   Sport mean_freq
+##   &lt;int&gt;     &lt;dbl&gt;
+## 1     1      80.6
+## 2     2      81.8
+## 3     3      85.4
+## 4     4      85.4
+## 5     5      91.3</code></pre>
+<pre class="r"><code>freq2 %&gt;% group_by(Sexe) %&gt;% summarise(mean_freq = mean(freqC)) </code></pre>
+<pre><code>## # A tibble: 2 x 2
+##   Sexe  mean_freq
+##   &lt;fct&gt;     &lt;dbl&gt;
+## 1 F          83.7
+## 2 M          85.9</code></pre>
+<pre class="r"><code>freq2 %&gt;% group_by(Sport, Sexe) %&gt;% summarise(mean_freq = mean(freqC)) </code></pre>
+<pre><code>## # A tibble: 10 x 3
+## # Groups:   Sport [5]
+##    Sport Sexe  mean_freq
+##    &lt;int&gt; &lt;fct&gt;     &lt;dbl&gt;
+##  1     1 F          80.7
+##  2     1 M          80.3
+##  3     2 F          83  
+##  4     2 M          80  
+##  5     3 F          83  
+##  6     3 M          87.3
+##  7     4 F          85.7
+##  8     4 M          85.2
+##  9     5 F          93  
+## 10     5 M          90.6</code></pre>
+<pre class="r"><code>p1 &lt;- ggplot(freq2, aes(y=freqC, x = Sport_fac)) + geom_boxplot()
+  
+p2 &lt;- ggplot(freq2, aes(y=freqC, x = Sexe)) + geom_boxplot()
+
+ggarrange(p1,p2+rremove(&#39;ylab&#39;))</code></pre>
+<p><img src="anova2_files/figure-html/anova_desc_boxplot-1.png" width="672" /></p>
+<pre class="r"><code>freq2 %&gt;% 
+  ggplot() +
+  aes(x = Sport_fac, color = Sexe, group = Sexe, y = freqC) +
+  stat_summary(fun.y = mean, geom = &quot;point&quot;) +
+  stat_summary(fun.y = mean, geom = &quot;line&quot;)</code></pre>
+<p><img src="anova2_files/figure-html/anova_desc_boxplot-2.png" width="672" /></p>
+<pre class="r"><code> lm2 &lt;- lm(freqC~Sexe+Sport, data=freq2)
+autoplot(lm2)</code></pre>
+<p><img src="anova2_files/figure-html/anova_lm2_des-1.png" width="672" /></p>
+<pre class="r"><code> anova(lm2)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Response: freqC
+##           Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+## Sexe       1  46.88   46.88  9.9993  0.003122 ** 
+## Sport      1 408.02  408.02 87.0269 2.944e-11 ***
+## Residuals 37 173.47    4.69                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code> Anova(lm2, type=&quot;II&quot;)</code></pre>
+<pre><code>## Anova Table (Type II tests)
+## 
+## Response: freqC
+##           Sum Sq Df F value    Pr(&gt;F)    
+## Sexe        1.22  1   0.260    0.6131    
+## Sport     408.02  1  87.027 2.944e-11 ***
+## Residuals 173.47 37                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

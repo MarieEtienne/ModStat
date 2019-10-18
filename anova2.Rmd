@@ -1,0 +1,253 @@
+---
+title: "Anova 2 facteurs : étude de la fréquence cardiaque"
+author: "Marie-Pierre Etienne"
+date: "October 16, 2018"
+output:
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
+```
+
+
+Les packages utiles pour cet exemple sont 
+```{r anova_package}
+#pour la fonction Anova
+library(car)
+# pour le tidyverse
+library(tidyverse)
+# pour les graphiques
+library(ggplot2) 
+library(ggfortify)
+library(ggpubr)
+# pour les moyennes ajustées
+library(emmeans) 
+
+```
+
+#Présentation
+
+On a enregistré pour 40 personnes, leur fréquence cardiaque au repos. On a noté pour chacune d'entre elles un niveau d'activité physique moyen ainsi que leur sexe. La variable sport varie de 1, très sportif, à 5 très sédentaire.
+
+```{r anova_data}
+freq <- read.table("data/FreqCardiaqueEq.txt", skip=1, header=T, sep=" ") 
+summary(freq)
+
+freq <- freq %>% mutate(Sport_fac = as.factor(Sport))
+summary(freq)
+```
+
+#Etude descriptive des données
+
+Plan d'expérience :
+```{r anova_exp}
+
+with( freq,
+      table(Sexe, Sport)
+      )
+# ou en mode tidy
+freq %>% count(Sexe, Sport)
+```
+
+
+
+Moyennes et écart-types par groupes :
+
+```{r anova_moy}
+freq %>% group_by(Sexe) %>% summarise(mean_freq = mean(freqC))
+freq %>% group_by(Sport) %>% summarise(mean_freq = mean(freqC))
+freq %>% group_by(Sexe, Sport) %>% summarise(mean_freq = mean(freqC))
+
+  
+p1 <- ggplot(freq, aes(y=freqC, x = Sport_fac)) + geom_boxplot()
+  
+p2 <- ggplot(freq, aes(y=freqC, x = Sexe)) + geom_boxplot()
+
+ggarrange(p1,p2+rremove('ylab'))
+```
+
+# Anova 1 facteur
+Question : ``Y a-t-il un effet de la pratique sportive sur la frequence cardiaque au repos ?''
+
+
+Ajustement du modèle :
+```{r anova_lm1}
+ lm_1 <- lm( freqC ~ Sport, data = freq)
+ 
+```
+
+Estimation et test sur les paramètres 
+
+```{r lm1_out}
+summary(lm_1)
+```
+
+Oh mais ça n'est pas une analyse de variance. Quelle andouille j'ai oublié d'utiliser Sport_fac plutôt que Sport. Je recommence.
+
+
+Ajustement du modèle :
+```{r anova_lm1_correct}
+ lm_1 <- lm( freqC ~ Sport_fac, data = freq)
+```
+
+Estimation et test sur les paramètres 
+
+```{r lm1_out_correct}
+summary(lm_1)
+```
+
+La matrice de design
+```{r design_matrix}
+model.matrix(lm_1)
+```
+
+Dans le modèle linéaire $Y=X\theta +E$, l'estimation des paramètres est donnée par 
+
+$$ \hat{\theta} = (X^\prime X )^{-1} X^\prime  Y.$$
+
+
+On peut retrouver les valeurs estimées  sur cet exemple
+
+```{r anova_estimation}
+Y <- matrix(freq$freqC, ncol = 1)
+X <- model.matrix(lm_1)
+Xprime <- t(X)
+
+solve(Xprime %*% X) %*%  Xprime %*% Y
+```
+
+La loi de l'estimateur $T$ correspondant est donné par
+
+$$T\sim\mathcal{N}\left( \theta, \sigma^2 (X^\prime X)^{-1} \right)$$
+
+
+## Test de l'effet global du niveau d'activité sportive .
+
+```{r test}
+anova(lm_1)
+```
+
+
+## Vérification des hypothèses
+
+```{r}
+autoplot(lm_1, data = freq)
+```
+
+
+
+
+
+
+
+# Anova deux facteurs, plan équilibré
+Question : ``Y a-t-il un effet de la pratique sportive ou du sexe sur la frequence cardiaque au repos ?''
+
+
+## Etude des interactions
+
+```{r anova_interaction}
+
+freq %>% 
+  ggplot() +
+  aes(x = Sport_fac, color = Sexe, group = Sexe, y = freqC) +
+  stat_summary(fun.y = mean, geom = "point") +
+  stat_summary(fun.y = mean, geom = "line")
+
+```
+
+Modèle avec interaction :
+```{r anova_lm2}
+ lmInt <- lm(freqC~Sexe+Sport+Sexe*Sport, data=freq)
+ summary(lmInt)
+```
+```{r anova_lm2_bis}
+ lmInt <- lm(freqC~Sexe+Sport_fac+Sexe*Sport_fac, data=freq)
+ summary(lmInt)
+```
+
+Question : ``Y a-t-il un effet de la pratique sportive  sur la fréquence cardiaque au repos ?'' \\
+Question : ``Y a-t-il un effet du sexe  sur la fréquence cardiaque au repos ?''
+
+Question : ``Y a-t-il un effet du sexe en interaction avec la pratique sportive sur la fréquence cardiaque au repos ?''
+```{r anova_out1}
+ anova(lmInt)
+ Anova(lmInt, type="II")
+```
+
+
+```{r}
+autoplot(lmInt, data = freq)
+```
+
+
+
+
+
+
+Modèle sans interaction :
+
+```{r anova_lmadd}
+ lm1 <- lm(freqC~Sexe+Sport_fac, data=freq)
+ summary(lm1)
+
+```
+
+Question : ``Y a-t-il un effet de la pratique sportive  sur la fréquence cardiaque au repos ?''\\
+Question : ``Y a-t-il un effet du sexe  sur la fréquence cardiaque au repos ?''
+
+```{r anova_lmout_test}
+ anova(lm1)
+ Anova(lm1, type="II")
+autoplot(lm1)
+```
+
+
+
+# Anova deux facteurs, plan déséquilibré
+
+```{r anova_data_des}
+ freq2 <- read.table(file = "data/FreqCardiaqueDes1.txt", header = T)
+freq2 <- freq2 %>% mutate(Sport_fac = as.factor(Sport))
+
+freq2 %>% count(Sport, Sexe) 
+```
+
+Moyennes et écart-types par groupes :
+
+```{r anova_desc_des}
+freq2 %>% group_by(Sport) %>% summarise(mean_freq = mean(freqC)) 
+
+freq2 %>% group_by(Sexe) %>% summarise(mean_freq = mean(freqC)) 
+
+freq2 %>% group_by(Sport, Sexe) %>% summarise(mean_freq = mean(freqC)) 
+```
+
+
+```{r anova_desc_boxplot}
+p1 <- ggplot(freq2, aes(y=freqC, x = Sport_fac)) + geom_boxplot()
+  
+p2 <- ggplot(freq2, aes(y=freqC, x = Sexe)) + geom_boxplot()
+
+ggarrange(p1,p2+rremove('ylab'))
+
+freq2 %>% 
+  ggplot() +
+  aes(x = Sport_fac, color = Sexe, group = Sexe, y = freqC) +
+  stat_summary(fun.y = mean, geom = "point") +
+  stat_summary(fun.y = mean, geom = "line")
+
+```
+
+
+
+
+
+```{r anova_lm2_des}
+ lm2 <- lm(freqC~Sexe+Sport, data=freq2)
+autoplot(lm2)
+ anova(lm2)
+ Anova(lm2, type="II")
+```
+

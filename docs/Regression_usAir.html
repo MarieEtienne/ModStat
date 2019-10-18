@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Marie-Pierre Etienne" />
+
+<meta name="date" content="2019-10-17" />
+
+<title>Régression multiple</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; } /* Alert */
+code span.an { color: #008000; } /* Annotation */
+code span.at { } /* Attribute */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #0000ff; } /* ControlFlow */
+code span.ch { color: #008080; } /* Char */
+code span.cn { } /* Constant */
+code span.co { color: #008000; } /* Comment */
+code span.cv { color: #008000; } /* CommentVar */
+code span.do { color: #008000; } /* Documentation */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.im { } /* Import */
+code span.in { color: #008000; } /* Information */
+code span.kw { color: #0000ff; } /* Keyword */
+code span.op { } /* Operator */
+code span.ot { color: #ff4000; } /* Other */
+code span.pp { color: #ff4000; } /* Preprocessor */
+code span.sc { color: #008080; } /* SpecialChar */
+code span.ss { color: #008080; } /* SpecialString */
+code span.st { color: #008080; } /* String */
+code span.va { } /* Variable */
+code span.vs { color: #008080; } /* VerbatimString */
+code span.wa { color: #008000; font-weight: bold; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 54px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h2 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h3 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h4 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h5 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h6 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Modélsation statistique</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="https://github.com/MarieEtienne/ModStat">
+    <span class="fa fa-github"></span>
+     
+    dépôt github
+  </a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="index.html">Présentation</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fa fa-child"></span>
+     
+    Introduction à R
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="intror_presentation.html">Présentation du logiciel R</a>
+    </li>
+    <li>
+      <a href="intror_rstudio.html">Environnement RStudio</a>
+    </li>
+    <li>
+      <a href="intror_manip.html">Manipulation de données</a>
+    </li>
+    <li>
+      <a href="intror_visu.html">Visualisation</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fa fa-tilde"></span>
+     
+    Modélisation statistique
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Comp_moyenne.html">Modèle de comparaison de moyennes</a>
+    </li>
+    <li>
+      <a href="anova2.html">Modèle d'analyse de variance</a>
+    </li>
+    <li>
+      <a href="Regression_usAir.html">Modèle de régression linéaire</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Régression multiple</h1>
+<h4 class="author">Marie-Pierre Etienne</h4>
+<h4 class="date">10/17/2019</h4>
+
+</div>
+
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">library</span>(ggplot2)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">library</span>(ggfortify)</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw">library</span>(tidyverse)</a>
+<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="kw">library</span>(car)</a>
+<a class="sourceLine" id="cb1-5" data-line-number="5"><span class="kw">library</span>(sf)</a>
+<a class="sourceLine" id="cb1-6" data-line-number="6"><span class="kw">library</span>(maps)</a>
+<a class="sourceLine" id="cb1-7" data-line-number="7"><span class="kw">library</span>(rnaturalearth)</a></code></pre></div>
+<div id="presentation" class="section level1">
+<h1>Présentation</h1>
+<p>Pour étudier la pollution dans des villes américaine, on a mesuré différentes variables. Les valeurs présentées sont les moyennes annuelles des années 1969 à 1971.\ SO2 : Dyoxide de soufre augmente les risques de pluies acides\ temp : temperature \ manuf : nbre de societe employant plus de 20 salariés \ pop : population en milliers \ wind : vitesse moyenne du vent annuel en miles/Heure \ precip hauteur de precipitations annuelles en pouces \ days : nbre de jours de precipitations \</p>
+<p>Chargement des données</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">usdata &lt;-<span class="st"> </span><span class="kw">read.table</span>(<span class="st">&quot;data/USAIR2.DAT&quot;</span>, <span class="dt">skip=</span><span class="dv">8</span>, <span class="dt">header=</span>T, <span class="dt">sep=</span><span class="st">&quot;;&quot;</span>,</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2">                     <span class="dt">colClasses=</span><span class="kw">c</span>(<span class="st">&quot;character&quot;</span>, <span class="st">&quot;numeric&quot;</span>,</a>
+<a class="sourceLine" id="cb2-3" data-line-number="3">                       <span class="st">&quot;numeric&quot;</span>,<span class="st">&quot;numeric&quot;</span>,<span class="st">&quot;numeric&quot;</span>,<span class="st">&quot;numeric&quot;</span>,</a>
+<a class="sourceLine" id="cb2-4" data-line-number="4">                       <span class="st">&quot;numeric&quot;</span>,<span class="st">&quot;numeric&quot;</span>),<span class="dt">row.names=</span><span class="dv">1</span></a>
+<a class="sourceLine" id="cb2-5" data-line-number="5">                     )</a>
+<a class="sourceLine" id="cb2-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="kw">head</span>(usdata)</a></code></pre></div>
+<pre><code>##               SO2 temp manuf pop wind precip days
+## Phoenix        10 70.3   213 582  6.0   7.05   36
+## Little rock    13 61.0    91 132  8.2  48.52  100
+## San Francisco  12 56.7   453 716  8.7  20.66   67
+## Denver         17 51.9   454 515  9.0  12.95   86
+## Hartford       56 49.1   412 158  9.0  43.37  127
+## Wilmington     36 54.0    80  80  9.0  40.25  114</code></pre>
+<div id="representation-des-villes" class="section level2">
+<h2>Representation des villes</h2>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="co">##load us.cities </span></a>
+<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="kw">data</span>(us.cities)</a>
+<a class="sourceLine" id="cb4-3" data-line-number="3">nbCity &lt;-<span class="st"> </span><span class="kw">dim</span>(usdata)[<span class="dv">1</span>]</a>
+<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="kw">head</span>(us.cities<span class="op">$</span>name)</a></code></pre></div>
+<pre><code>## [1] &quot;Abilene TX&quot; &quot;Akron OH&quot;   &quot;Alameda CA&quot; &quot;Albany GA&quot;  &quot;Albany NY&quot; 
+## [6] &quot;Albany OR&quot;</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="co">##indices of studied cities in us.cities</span></a>
+<a class="sourceLine" id="cb6-2" data-line-number="2">ind.cities &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">694</span>, <span class="dv">509</span>, <span class="dv">802</span>, <span class="dv">247</span>, <span class="dv">387</span>, <span class="dv">990</span>, <span class="dv">944</span>, <span class="dv">429</span>, <span class="dv">559</span>, <span class="dv">41</span>,</a>
+<a class="sourceLine" id="cb6-3" data-line-number="3">                <span class="dv">173</span>, <span class="dv">422</span>, <span class="dv">248</span>, <span class="dv">988</span>, <span class="dv">522</span>, <span class="dv">609</span>, <span class="dv">55</span>, <span class="dv">250</span>, <span class="dv">568</span>, <span class="dv">443</span>,</a>
+<a class="sourceLine" id="cb6-4" data-line-number="4">                <span class="dv">785</span>, <span class="dv">650</span>, <span class="dv">7</span>, <span class="dv">5</span>, <span class="dv">126</span>, <span class="dv">180</span>, <span class="dv">185</span>, <span class="dv">195</span>, <span class="dv">693</span>, <span class="dv">700</span>, <span class="dv">726</span>,</a>
+<a class="sourceLine" id="cb6-5" data-line-number="5">                <span class="dv">549</span>, <span class="dv">601</span>, <span class="dv">225</span>, <span class="dv">413</span>, <span class="dv">794</span>, <span class="dv">619</span>, <span class="dv">753</span>, <span class="dv">834</span>, <span class="dv">165</span>, <span class="dv">567</span>)</a>
+<a class="sourceLine" id="cb6-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb6-7" data-line-number="7">sites &lt;-<span class="st"> </span>us.cities[ind.cities,]</a>
+<a class="sourceLine" id="cb6-8" data-line-number="8">world &lt;-<span class="st"> </span><span class="kw">ne_countries</span>(<span class="dt">scale =</span> <span class="st">&quot;medium&quot;</span>, <span class="dt">returnclass =</span> <span class="st">&quot;sf&quot;</span>)</a>
+<a class="sourceLine" id="cb6-9" data-line-number="9"><span class="kw">ggplot</span>(<span class="dt">data =</span> world) <span class="op">+</span></a>
+<a class="sourceLine" id="cb6-10" data-line-number="10"><span class="st">    </span><span class="kw">geom_sf</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb6-11" data-line-number="11"><span class="st">    </span><span class="kw">geom_point</span>(<span class="dt">data =</span> sites, <span class="kw">aes</span>(<span class="dt">x =</span> long, <span class="dt">y =</span> lat),</a>
+<a class="sourceLine" id="cb6-12" data-line-number="12">               <span class="dt">size =</span> <span class="dv">2</span>, </a>
+<a class="sourceLine" id="cb6-13" data-line-number="13">              <span class="dt">shape =</span> <span class="dv">21</span>, <span class="dt">fill =</span> <span class="st">&quot;darkred&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb6-14" data-line-number="14"><span class="st">    </span><span class="kw">coord_sf</span>(<span class="dt">xlim =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">130</span>, <span class="dv">-64</span>), <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">22</span>, <span class="dv">50</span>), <span class="dt">expand =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
+<p><img src="Regression_usAir_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+</div>
+</div>
+<div id="description-des-donnees" class="section level1">
+<h1>Description des données</h1>
+<p>Statistiques simples sur les données :</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">usdata <span class="op">%&gt;%</span><span class="st">  </span><span class="kw">summarise_if</span>(is.numeric, mean, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>) </a></code></pre></div>
+<pre><code>##        SO2     temp    manuf      pop     wind   precip     days
+## 1 30.04878 55.76341 463.0976 608.6098 9.443902 36.76902 113.9024</code></pre>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">usdata <span class="op">%&gt;%</span><span class="st">  </span><span class="kw">summarise_if</span>(is.numeric, sd, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>) </a></code></pre></div>
+<pre><code>##        SO2     temp    manuf     pop     wind   precip     days
+## 1 23.47227 7.227716 563.4739 579.113 1.428644 11.77155 26.50642</code></pre>
+<p>Etude de la corrélation entre les variables :</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw">library</span>(GGally)</a>
+<a class="sourceLine" id="cb11-2" data-line-number="2">usdata <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(<span class="dv">2</span><span class="op">:</span><span class="dv">7</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ggpairs</span>()</a></code></pre></div>
+<p><img src="Regression_usAir_files/figure-html/reg_correlation-1.png" width="672" /></p>
+</div>
+<div id="regression-lineaire-simple" class="section level1">
+<h1>Régression linéaire simple</h1>
+<p>##regression SO2 en fonction de manuf</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">usdata <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ggplot</span>() <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">x=</span>SO2, <span class="dt">y =</span>manuf))</a></code></pre></div>
+<div class="figure">
+<img src="Regression_usAir_files/figure-html/reg_plot1-1.png" alt="Le SO2 en fonction du nombre d'entreprises." width="672" />
+<p class="caption">
+Le SO2 en fonction du nombre d’entreprises.
+</p>
+</div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">us.lm &lt;-<span class="st"> </span><span class="kw">lm</span>(SO2<span class="op">~</span>manuf, <span class="dt">data=</span>usdata)</a>
+<a class="sourceLine" id="cb13-2" data-line-number="2"><span class="kw">anova</span>(us.lm)</a></code></pre></div>
+<pre><code>## Analysis of Variance Table
+## 
+## Response: SO2
+##           Df  Sum Sq Mean Sq F value    Pr(&gt;F)    
+## manuf      1  9161.7  9161.7   27.75 5.363e-06 ***
+## Residuals 39 12876.2   330.2                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>Valeur des paramètres estimés et tests sur les paramètres :</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="kw">summary</span>(us.lm)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = SO2 ~ manuf, data = usdata)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -26.976 -12.968  -3.495   6.710  67.177 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 17.610574   3.691587   4.770 2.58e-05 ***
+## manuf        0.026859   0.005099   5.268 5.36e-06 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 18.17 on 39 degrees of freedom
+## Multiple R-squared:  0.4157, Adjusted R-squared:  0.4007 
+## F-statistic: 27.75 on 1 and 39 DF,  p-value: 5.363e-06</code></pre>
+<div id="effet-levier-des-differents-individus" class="section level2">
+<h2>Effet levier des différents individus</h2>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"> h.us.lm &lt;-<span class="st"> </span><span class="kw">hatvalues</span>(us.lm)</a>
+<a class="sourceLine" id="cb17-2" data-line-number="2"> <span class="kw">sum</span>(h.us.lm)</a></code></pre></div>
+<pre><code>## [1] 2</code></pre>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1"> <span class="kw">sum</span>(h.us.lm)<span class="op">/</span><span class="kw">length</span>(usdata<span class="op">$</span>SO2)</a></code></pre></div>
+<pre><code>## [1] 0.04878049</code></pre>
+<p>Graphiques de diagnostics</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="kw">autoplot</span>(us.lm, <span class="dt">data =</span> usdata)</a></code></pre></div>
+<div class="figure">
+<img src="Regression_usAir_files/figure-html/unnamed-chunk-6-1.png" alt="Les différents graphiques de diagnostic fournis par R" width="672" />
+<p class="caption">
+Les différents graphiques de diagnostic fournis par R
+</p>
+</div>
+</div>
+</div>
+<div id="regression-multiple" class="section level1">
+<h1>Régression multiple</h1>
+<p>Mise en oeuvre de la régression multiple :</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">us.lm2 &lt;-<span class="st"> </span><span class="kw">lm</span>(SO2<span class="op">~</span>.,<span class="dt">data=</span>usdata)</a>
+<a class="sourceLine" id="cb22-2" data-line-number="2"><span class="co">## test de type I</span></a>
+<a class="sourceLine" id="cb22-3" data-line-number="3"><span class="kw">anova</span>(us.lm2)</a></code></pre></div>
+<pre><code>## Analysis of Variance Table
+## 
+## Response: SO2
+##           Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+## temp       1 4143.3  4143.3 19.3420 0.0001021 ***
+## manuf      1 7230.8  7230.8 33.7549 1.521e-06 ***
+## pop        1 2125.2  2125.2  9.9207 0.0033977 ** 
+## wind       1  447.9   447.9  2.0909 0.1573365    
+## precip     1  785.4   785.4  3.6664 0.0639662 .  
+## days       1   22.1    22.1  0.1032 0.7499725    
+## Residuals 34 7283.3   214.2                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1"><span class="co">## test de type II</span></a>
+<a class="sourceLine" id="cb24-2" data-line-number="2"><span class="kw">Anova</span>(us.lm2, <span class="dt">type=</span><span class="st">&quot;II&quot;</span>)</a></code></pre></div>
+<pre><code>## Anova Table (Type II tests)
+## 
+## Response: SO2
+##           Sum Sq Df F value    Pr(&gt;F)    
+## temp       892.5  1  4.1664 0.0490557 *  
+## manuf     3640.1  1 16.9929 0.0002278 ***
+## pop       1443.1  1  6.7365 0.0138462 *  
+## wind       658.1  1  3.0723 0.0886504 .  
+## precip     427.3  1  1.9949 0.1669176    
+## days        22.1  1  0.1032 0.7499725    
+## Residuals 7283.3 34                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1"><span class="kw">autoplot</span>(us.lm2, <span class="dt">data =</span> usdata)</a></code></pre></div>
+<p><img src="Regression_usAir_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>Les valeurs estimées des paramètres</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1"><span class="kw">summary</span>(us.lm2)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = SO2 ~ ., data = usdata)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -23.004  -8.542  -0.991   5.758  48.758 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 111.72848   47.31810   2.361 0.024087 *  
+## temp         -1.26794    0.62118  -2.041 0.049056 *  
+## manuf         0.06492    0.01575   4.122 0.000228 ***
+## pop          -0.03928    0.01513  -2.595 0.013846 *  
+## wind         -3.18137    1.81502  -1.753 0.088650 .  
+## precip        0.51236    0.36276   1.412 0.166918    
+## days         -0.05205    0.16201  -0.321 0.749972    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 14.64 on 34 degrees of freedom
+## Multiple R-squared:  0.6695, Adjusted R-squared:  0.6112 
+## F-statistic: 11.48 on 6 and 34 DF,  p-value: 5.419e-07</code></pre>
+</div>
+<div id="selection-automatique-de-variables" class="section level1">
+<h1>Sélection automatique de variables</h1>
+<p>Sélection de variables backward : {</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" data-line-number="1">stepus.back &lt;-<span class="st"> </span><span class="kw">step</span>(us.lm2, <span class="dt">direction=</span><span class="st">&quot;backward&quot;</span>)</a></code></pre></div>
+<pre><code>## Start:  AIC=226.37
+## SO2 ~ temp + manuf + pop + wind + precip + days
+## 
+##          Df Sum of Sq     RSS    AIC
+## - days    1      22.1  7305.4 224.50
+## &lt;none&gt;                 7283.3 226.37
+## - precip  1     427.3  7710.6 226.71
+## - wind    1     658.1  7941.4 227.92
+## - temp    1     892.5  8175.8 229.11
+## - pop     1    1443.1  8726.3 231.78
+## - manuf   1    3640.1 10923.4 240.99
+## 
+## Step:  AIC=224.49
+## SO2 ~ temp + manuf + pop + wind + precip
+## 
+##          Df Sum of Sq     RSS    AIC
+## &lt;none&gt;                 7305.4 224.50
+## - wind    1     636.1  7941.5 225.92
+## - precip  1     785.4  8090.8 226.68
+## - pop     1    1447.5  8752.9 229.91
+## - temp    1    1517.4  8822.8 230.23
+## - manuf   1    3636.8 10942.1 239.06</code></pre>
+<p>Sélection de variables forward :</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1">stepus.forward &lt;-<span class="st"> </span><span class="kw">step</span>(<span class="kw">lm</span>(SO2<span class="op">~</span><span class="dv">1</span>,<span class="dt">data=</span>usdata), <span class="dt">scope=</span><span class="op">~</span>temp<span class="op">+</span>pop<span class="op">+</span>manuf<span class="op">+</span>wind<span class="op">+</span>precip<span class="op">+</span>days</a>
+<a class="sourceLine" id="cb31-2" data-line-number="2">, <span class="dt">direction=</span><span class="st">&quot;forward&quot;</span>, <span class="dt">k=</span><span class="kw">log</span>(<span class="kw">length</span>(usdata<span class="op">$</span>pop)))</a></code></pre></div>
+<pre><code>## Start:  AIC=261.48
+## SO2 ~ 1
+## 
+##          Df Sum of Sq   RSS    AIC
+## + manuf   1    9161.7 12876 243.16
+## + pop     1    5373.2 16665 253.73
+## + temp    1    4143.3 17895 256.65
+## + days    1    3009.9 19028 259.17
+## &lt;none&gt;                22038 261.48
+## + wind    1     197.6 21840 264.82
+## + precip  1      65.0 21973 265.07
+## 
+## Step:  AIC=243.16
+## SO2 ~ manuf
+## 
+##          Df Sum of Sq     RSS    AIC
+## + pop     1    3759.5  9116.6 232.72
+## + temp    1    2212.3 10663.8 239.14
+## + days    1    1816.1 11060.0 240.64
+## &lt;none&gt;                12876.2 243.16
+## + precip  1     124.7 12751.4 246.47
+## + wind    1      80.6 12795.6 246.62
+## 
+## Step:  AIC=232.72
+## SO2 ~ manuf + pop
+## 
+##          Df Sum of Sq    RSS    AIC
+## &lt;none&gt;                9116.6 232.72
+## + days    1    684.97 8431.7 233.23
+## + temp    1    577.98 8538.7 233.75
+## + precip  1    148.26 8968.4 235.76
+## + wind    1    146.93 8969.7 235.76</code></pre>
+<p>Sélection de variables stepwise :</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" data-line-number="1">stepus.stepwise &lt;-<span class="st"> </span><span class="kw">step</span>(us.lm2, <span class="dt">direction=</span><span class="st">&quot;both&quot;</span>)</a></code></pre></div>
+<pre><code>## Start:  AIC=226.37
+## SO2 ~ temp + manuf + pop + wind + precip + days
+## 
+##          Df Sum of Sq     RSS    AIC
+## - days    1      22.1  7305.4 224.50
+## &lt;none&gt;                 7283.3 226.37
+## - precip  1     427.3  7710.6 226.71
+## - wind    1     658.1  7941.4 227.92
+## - temp    1     892.5  8175.8 229.11
+## - pop     1    1443.1  8726.3 231.78
+## - manuf   1    3640.1 10923.4 240.99
+## 
+## Step:  AIC=224.49
+## SO2 ~ temp + manuf + pop + wind + precip
+## 
+##          Df Sum of Sq     RSS    AIC
+## &lt;none&gt;                 7305.4 224.50
+## - wind    1     636.1  7941.5 225.92
+## + days    1      22.1  7283.3 226.37
+## - precip  1     785.4  8090.8 226.68
+## - pop     1    1447.5  8752.9 229.91
+## - temp    1    1517.4  8822.8 230.23
+## - manuf   1    3636.8 10942.1 239.06</code></pre>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

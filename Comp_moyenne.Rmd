@@ -1,0 +1,71 @@
+---
+title: "Comparaison de moyenne"
+author: "Marie-Pierre Etienne"
+date: "10/17/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(tidyverse)
+```
+
+## Importation du jeu de données poulpe
+
+On s'intéresse au dysmorphisme sexuel chez les poulpes. Plus précisément on souhaite comparer le poids des poulpes mâles et des poulples femelles.
+
+Les données sont disponibles sur le [site] (https://r-stat-sc-donnees.github.io/) companieon du livre statistique avec R.
+
+```{r importation}
+poulpe <-read.table("https://r-stat-sc-donnees.github.io/poulpe.csv", header=TRUE, sep=";")
+```
+
+
+## Représentation
+
+```{r}
+boxplot(poulpe$Poids~poulpe$Sexe)
+plot(poulpe$Poids~poulpe$Sexe)
+```
+
+```{r}
+poulpe %>% ggplot() + geom_boxplot(aes(x=Sexe, y = Poids , fill = Sexe)) + scale_fill_viridis_d()
+``` 
+
+
+## Test de conaraison de moyennes
+
+Le modèle de comparaison de moyenne 
+$$ Y_{ik} \sim \mathcal{N}(\mu_i, \sigma^2),\quad  i= 1, 2; k=1, \dots n_i$$
+
+- i désigne le sexe,
+- k le numéro d'individus 
+
+$H_0$ = { pas de différence de  poids entre mâle et femelle  }
+
+$H_0$ = { $\mu_1 = \mu_2$ }
+
+
+$H_1$ = { Les mâles et les femelles ont des poids différents }
+
+$H_1$ = { $\mu_1 \ne \mu_2$ }
+
+Mise en oeuvre dans R
+
+```{r test_comp}
+t.test(poulpe$Poids~poulpe$Sexe, var.equal = TRUE,
+       conf.level = 0.9987)
+
+```
+
+
+
+## Intervalle de confiance
+
+
+$$IC_{\alpha}(\mu_1 - \mu_2)= \left [
+- \hat{\sigma} \sqrt{\frac{1}{n_1} + \frac{1}{n_2} }t_{1-\alpha/2} + \hat{\mu}_1 - \hat{\mu}_2 ; 
+ \hat{\sigma} \sqrt{\frac{1}{n_1} + \frac{1}{n_2} }t_{1-\alpha/2} + \hat{\mu}_1 - \hat{\mu}_2
+\right]$$
+

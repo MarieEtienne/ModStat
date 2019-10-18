@@ -1,0 +1,51 @@
+---
+title: "Site web pour la formation doctorale modélisation statistique "
+output: 
+  html_document:
+   toc: true
+   toc_float: true
+   number_sections: false
+   highlight: tango
+   css: style.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tibble)
+library(tidyr)
+library(stringr)
+library(purrr)
+library(dplyr)
+```
+
+
+
+## Contexte 
+
+- Le traitement et la visualisation de données est une étape clé dans la compréhension de toute sorte de phénomène.
+
+- Les données sont de plus en plus massives et complexes et nécessitent des outils et des méthodes pour
+    - visualiser les données et  résumer les données
+    - extraire de l'information des données
+
+- Une démarche scientifique  ouverte et reproductible  implique de 
+    - fournir les données dans un format utilisable
+    - pouvoir reproduire l'ensemble du traitement des données 
+    - fournir une explication détaillée des procédures choisies et des motivations
+
+
+## Objectifs du module
+
+- Fournir des outils pour visualiser et analyser des données
+
+- Revisiter les stats pour les ancrer dans les problématiques des particpants
+
+- Proposer un ensemble de bonnes pratiques dans le cadre d'une démarche scientifique reproductible
+
+
+## Concrètement
+
+- Outils : \verb+R+ et l'environnement \verb+RStudio+  (cf Jérôme pour la partie SIG)
+    - Manipulation de données 
+    - Modèles linéaires 
+    - Production de rapport scientifique

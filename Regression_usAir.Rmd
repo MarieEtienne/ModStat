@@ -1,0 +1,184 @@
+---
+title: "Régression multiple"
+author: "Marie-Pierre Etienne"
+date: "10/17/2019"
+output: html_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r reg_package_utile}
+library(ggplot2)
+library(ggfortify)
+library(tidyverse)
+library(car)
+library(sf)
+library(maps)
+library(rnaturalearth)
+```
+
+# Présentation
+Pour étudier la pollution dans des villes américaine, on a mesuré différentes variables. Les valeurs présentées sont les moyennes annuelles des années 1969 à 1971.\\
+SO2 : Dyoxide de soufre augmente les risques de pluies acides\\
+temp : temperature \\
+manuf : nbre de societe employant plus de 20 salariés \\
+pop : population en milliers \\
+wind : vitesse moyenne du vent annuel en miles/Heure \\
+precip hauteur de precipitations annuelles en pouces \\
+days : nbre de jours de precipitations \\
+
+Chargement des données
+
+
+
+```{r reg_data}
+usdata <- read.table("data/USAIR2.DAT", skip=8, header=T, sep=";",
+                     colClasses=c("character", "numeric",
+                       "numeric","numeric","numeric","numeric",
+                       "numeric","numeric"),row.names=1
+                     )
+
+head(usdata)
+```
+
+## Representation des villes                                       
+
+```{r}
+##load us.cities 
+data(us.cities)
+nbCity <- dim(usdata)[1]
+head(us.cities$name)
+
+##indices of studied cities in us.cities
+ind.cities <- c(694, 509, 802, 247, 387, 990, 944, 429, 559, 41,
+                173, 422, 248, 988, 522, 609, 55, 250, 568, 443,
+                785, 650, 7, 5, 126, 180, 185, 195, 693, 700, 726,
+                549, 601, 225, 413, 794, 619, 753, 834, 165, 567)
+
+sites <- us.cities[ind.cities,]
+world <- ne_countries(scale = "medium", returnclass = "sf")
+ggplot(data = world) +
+    geom_sf() +
+    geom_point(data = sites, aes(x = long, y = lat),
+               size = 2, 
+              shape = 21, fill = "darkred") +
+    coord_sf(xlim = c(-130, -64), ylim = c(22, 50), expand = FALSE)
+```
+
+# Description des données 
+
+Statistiques simples sur les données :
+
+
+```{r}
+usdata %>%  summarise_if(is.numeric, mean, na.rm = TRUE) 
+usdata %>%  summarise_if(is.numeric, sd, na.rm = TRUE) 
+
+```
+
+Etude de la corrélation entre les variables :
+
+```{r reg_correlation, message=FALSE}
+library(GGally)
+usdata %>% select(2:7) %>% ggpairs()
+```
+
+# Régression linéaire simple
+
+##regression SO2 en fonction de manuf
+
+```{r reg_plot1, fig.cap="Le SO2 en fonction du nombre d'entreprises."}
+usdata %>% ggplot() + geom_point(aes(x=SO2, y =manuf))
+```
+
+
+```{r}
+us.lm <- lm(SO2~manuf, data=usdata)
+anova(us.lm)
+```
+
+
+ Valeur des paramètres estimés et tests sur les paramètres :
+
+ 
+```{r}
+summary(us.lm)
+
+```
+
+## Effet levier des différents individus
+
+```{r}
+ h.us.lm <- hatvalues(us.lm)
+ sum(h.us.lm)
+ sum(h.us.lm)/length(usdata$SO2)
+```
+
+Graphiques de diagnostics
+
+```{r, fig.cap='Les différents graphiques de diagnostic fournis par R'}
+autoplot(us.lm, data = usdata)
+```
+
+
+
+# Régression multiple
+
+Mise en oeuvre de la régression multiple :
+
+```{r}
+us.lm2 <- lm(SO2~.,data=usdata)
+## test de type I
+anova(us.lm2)
+## test de type II
+Anova(us.lm2, type="II")
+
+```
+
+
+```{r}
+autoplot(us.lm2, data = usdata)
+
+```
+  
+ 
+
+
+
+Les valeurs estimées des paramètres
+
+```{r}
+summary(us.lm2)
+
+```
+
+
+# Sélection automatique de variables
+
+Sélection de variables backward :
+{\small
+```{r}
+stepus.back <- step(us.lm2, direction="backward")
+
+```
+Sélection de variables forward :
+```{r}
+stepus.forward <- step(lm(SO2~1,data=usdata), scope=~temp+pop+manuf+wind+precip+days
+, direction="forward", k=log(length(usdata$pop)))
+
+```
+
+
+
+Sélection de variables stepwise :
+```{r}
+stepus.stepwise <- step(us.lm2, direction="both")
+
+```
+  
+
+
+
+
