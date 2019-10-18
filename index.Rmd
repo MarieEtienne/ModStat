@@ -1,5 +1,5 @@
 ---
-title: "Site web pour la formation doctorale modélisation statistique "
+title: "Modélisation statistique "
 output: 
   html_document:
    number_sections: false
