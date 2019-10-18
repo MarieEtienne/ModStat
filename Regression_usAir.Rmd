@@ -1,9 +1,13 @@
 ---
 title: "Régression multiple"
 author: "Marie-Pierre Etienne"
-date: "10/17/2019"
-output: html_document
+output: 
+  html_document:
+   number_sections: false
+   highlight: tango
+   css: style.css
 ---
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```

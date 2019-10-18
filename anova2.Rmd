@@ -1,9 +1,11 @@
 ---
 title: "Anova 2 facteurs : étude de la fréquence cardiaque"
 author: "Marie-Pierre Etienne"
-date: "October 16, 2018"
-output:
-  html_document: default
+output: 
+  html_document:
+   number_sections: false
+   highlight: tango
+   css: style.css
 ---
 
 ```{r setup, include=FALSE}

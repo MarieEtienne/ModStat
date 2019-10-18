@@ -2,8 +2,6 @@
 title: "Site web pour la formation doctorale modélisation statistique "
 output: 
   html_document:
-   toc: true
-   toc_float: true
    number_sections: false
    highlight: tango
    css: style.css

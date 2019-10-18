@@ -2,8 +2,6 @@
 title: "Visualiser des données ou des résultats"
 output: 
   html_document:
-   toc: true
-   toc_float: true
    number_sections: false
    highlight: tango
    css: style.css
