@@ -126,6 +126,14 @@ $$T\sim\mathcal{N}\left( \theta, \sigma^2 (X^\prime X)^{-1} \right)$$
 
 ## Test de l'effet global du niveau d'activité sportive .
 
+```{r modele_nul_comparaison}
+
+lm_0 <- lm(freqC~1, data =freq)
+anova(lm_1)
+anova(lm_0, lm_1)
+```
+
+
 ```{r test}
 anova(lm_1)
 ```
@@ -165,14 +173,33 @@ Modèle avec interaction :
  summary(lmInt)
 ```
 ```{r anova_lm2_bis}
- lmInt <- lm(freqC~Sexe+Sport_fac+Sexe*Sport_fac, data=freq)
+ lmInt <- lm(freqC ~  Sexe + Sport_fac + Sexe * Sport_fac, data=freq)
  summary(lmInt)
 ```
 
-Question : ``Y a-t-il un effet de la pratique sportive  sur la fréquence cardiaque au repos ?'' \\
-Question : ``Y a-t-il un effet du sexe  sur la fréquence cardiaque au repos ?''
 
-Question : ``Y a-t-il un effet du sexe en interaction avec la pratique sportive sur la fréquence cardiaque au repos ?''
+Test du modèle complet 
+
+```{r}
+autoplot(lmInt)
+anova(lm_0, lmInt)
+```
+
+
+1. Question : ``Y a-t-il un effet de la pratique sportive  sur la fréquence cardiaque au repos ?'' \\
+2. Question : ``Y a-t-il un effet du sexe  sur la fréquence cardiaque au repos ?''
+
+3. Question : ``Y a-t-il un effet du sexe en interaction avec la pratique sportive sur la fréquence cardiaque au repos ?''
+
+
+On commence toujours par tester l'effet de l'interaction.
+
+
+```{r}
+lm_12 <- lm(freqC~ Sport_fac + Sexe, data = freq)
+anova(lm_12, lmInt)
+```
+
 ```{r anova_out1}
  anova(lmInt)
  Anova(lmInt, type="II")
@@ -212,6 +239,7 @@ autoplot(lm1)
 ```{r anova_data_des}
  freq2 <- read.table(file = "data/FreqCardiaqueDes1.txt", header = T)
 freq2 <- freq2 %>% mutate(Sport_fac = as.factor(Sport))
+table(freq2$Sexe, freq2$Sport)
 
 freq2 %>% count(Sport, Sexe) 
 ```
@@ -247,9 +275,22 @@ freq2 %>%
 
 
 ```{r anova_lm2_des}
- lm2 <- lm(freqC~Sexe+Sport, data=freq2)
+ lm2 <- lm(freqC~  Sport_fac  + Sexe + Sexe:Sport_fac, data=freq2)
 autoplot(lm2)
  anova(lm2)
  Anova(lm2, type="II")
+```
+
+On change l'ordre des facteurs
+
+
+```{r}
+ lm2 <- lm(freqC~  Sport_fac + Sexe + Sexe:Sport_fac, data=freq2)
+autoplot(lm2)
+ anova(lm2)
+emmeans(lm2, 
+        pairwise~Sport_fac,
+        adjust = "hochberg") 
+
 ```
 

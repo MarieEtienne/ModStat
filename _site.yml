@@ -30,6 +30,8 @@ navbar:
         href: anova2.html
       - text: "Modèle de régression linéaire"
         href: Regression_usAir.html
+      - text: "Modèle linéaire généralisé"
+        href: glm.html
      
       
 output:

@@ -401,6 +401,9 @@ $(document).ready(function () {
     <li>
       <a href="Regression_usAir.html">Modèle de régression linéaire</a>
     </li>
+    <li>
+      <a href="glm.html">Modèle linéaire généralisé</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -647,7 +650,27 @@ $(document).ready(function () {
 <p><span class="math display">\[T\sim\mathcal{N}\left( \theta, \sigma^2 (X^\prime X)^{-1} \right)\]</span></p>
 <div id="test-de-leffet-global-du-niveau-dactivite-sportive-." class="section level2">
 <h2>Test de l’effet global du niveau d’activité sportive .</h2>
-<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb38-1" data-line-number="1"><span class="kw">anova</span>(lm_<span class="dv">1</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb38-1" data-line-number="1">lm_<span class="dv">0</span> &lt;-<span class="st"> </span><span class="kw">lm</span>(freqC<span class="op">~</span><span class="dv">1</span>, <span class="dt">data =</span>freq)</a>
+<a class="sourceLine" id="cb38-2" data-line-number="2"><span class="kw">anova</span>(lm_<span class="dv">1</span>)</a></code></pre></div>
+<pre><code>## Analysis of Variance Table
+## 
+## Response: freqC
+##           Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+## Sport_fac  4 475.15 118.788  29.539 8.766e-11 ***
+## Residuals 35 140.75   4.021                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb40-1" data-line-number="1"><span class="kw">anova</span>(lm_<span class="dv">0</span>, lm_<span class="dv">1</span>)</a></code></pre></div>
+<pre><code>## Analysis of Variance Table
+## 
+## Model 1: freqC ~ 1
+## Model 2: freqC ~ Sport_fac
+##   Res.Df    RSS Df Sum of Sq      F    Pr(&gt;F)    
+## 1     39 615.90                                  
+## 2     35 140.75  4    475.15 29.539 8.766e-11 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb42-1" data-line-number="1"><span class="kw">anova</span>(lm_<span class="dv">1</span>)</a></code></pre></div>
 <pre><code>## Analysis of Variance Table
 ## 
 ## Response: freqC
@@ -659,7 +682,7 @@ $(document).ready(function () {
 </div>
 <div id="verification-des-hypotheses" class="section level2">
 <h2>Vérification des hypothèses</h2>
-<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb40-1" data-line-number="1"><span class="kw">autoplot</span>(lm_<span class="dv">1</span>, <span class="dt">data =</span> freq)</a></code></pre></div>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb44-1" data-line-number="1"><span class="kw">autoplot</span>(lm_<span class="dv">1</span>, <span class="dt">data =</span> freq)</a></code></pre></div>
 <p><img src="anova2_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
 </div>
 </div>
@@ -668,15 +691,15 @@ $(document).ready(function () {
 <p>Question : ``Y a-t-il un effet de la pratique sportive ou du sexe sur la frequence cardiaque au repos ?’’</p>
 <div id="etude-des-interactions" class="section level2">
 <h2>Etude des interactions</h2>
-<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb41-1" data-line-number="1">freq <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb41-2" data-line-number="2"><span class="st">  </span><span class="kw">ggplot</span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb41-3" data-line-number="3"><span class="st">  </span><span class="kw">aes</span>(<span class="dt">x =</span> Sport_fac, <span class="dt">color =</span> Sexe, <span class="dt">group =</span> Sexe, <span class="dt">y =</span> freqC) <span class="op">+</span></a>
-<a class="sourceLine" id="cb41-4" data-line-number="4"><span class="st">  </span><span class="kw">stat_summary</span>(<span class="dt">fun.y =</span> mean, <span class="dt">geom =</span> <span class="st">&quot;point&quot;</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb41-5" data-line-number="5"><span class="st">  </span><span class="kw">stat_summary</span>(<span class="dt">fun.y =</span> mean, <span class="dt">geom =</span> <span class="st">&quot;line&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb45-1" data-line-number="1">freq <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb45-2" data-line-number="2"><span class="st">  </span><span class="kw">ggplot</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb45-3" data-line-number="3"><span class="st">  </span><span class="kw">aes</span>(<span class="dt">x =</span> Sport_fac, <span class="dt">color =</span> Sexe, <span class="dt">group =</span> Sexe, <span class="dt">y =</span> freqC) <span class="op">+</span></a>
+<a class="sourceLine" id="cb45-4" data-line-number="4"><span class="st">  </span><span class="kw">stat_summary</span>(<span class="dt">fun.y =</span> mean, <span class="dt">geom =</span> <span class="st">&quot;point&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb45-5" data-line-number="5"><span class="st">  </span><span class="kw">stat_summary</span>(<span class="dt">fun.y =</span> mean, <span class="dt">geom =</span> <span class="st">&quot;line&quot;</span>)</a></code></pre></div>
 <p><img src="anova2_files/figure-html/anova_interaction-1.png" width="672" /></p>
 <p>Modèle avec interaction :</p>
-<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb42-1" data-line-number="1"> lmInt &lt;-<span class="st"> </span><span class="kw">lm</span>(freqC<span class="op">~</span>Sexe<span class="op">+</span>Sport<span class="op">+</span>Sexe<span class="op">*</span>Sport, <span class="dt">data=</span>freq)</a>
-<a class="sourceLine" id="cb42-2" data-line-number="2"> <span class="kw">summary</span>(lmInt)</a></code></pre></div>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb46-1" data-line-number="1"> lmInt &lt;-<span class="st"> </span><span class="kw">lm</span>(freqC<span class="op">~</span>Sexe<span class="op">+</span>Sport<span class="op">+</span>Sexe<span class="op">*</span>Sport, <span class="dt">data=</span>freq)</a>
+<a class="sourceLine" id="cb46-2" data-line-number="2"> <span class="kw">summary</span>(lmInt)</a></code></pre></div>
 <pre><code>## 
 ## Call:
 ## lm(formula = freqC ~ Sexe + Sport + Sexe * Sport, data = freq)
@@ -697,8 +720,8 @@ $(document).ready(function () {
 ## Residual standard error: 2.085 on 36 degrees of freedom
 ## Multiple R-squared:  0.7458, Adjusted R-squared:  0.7246 
 ## F-statistic: 35.21 on 3 and 36 DF,  p-value: 8.35e-11</code></pre>
-<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb44-1" data-line-number="1"> lmInt &lt;-<span class="st"> </span><span class="kw">lm</span>(freqC<span class="op">~</span>Sexe<span class="op">+</span>Sport_fac<span class="op">+</span>Sexe<span class="op">*</span>Sport_fac, <span class="dt">data=</span>freq)</a>
-<a class="sourceLine" id="cb44-2" data-line-number="2"> <span class="kw">summary</span>(lmInt)</a></code></pre></div>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb48-1" data-line-number="1"> lmInt &lt;-<span class="st"> </span><span class="kw">lm</span>(freqC <span class="op">~</span><span class="st">  </span>Sexe <span class="op">+</span><span class="st"> </span>Sport_fac <span class="op">+</span><span class="st"> </span>Sexe <span class="op">*</span><span class="st"> </span>Sport_fac, <span class="dt">data=</span>freq)</a>
+<a class="sourceLine" id="cb48-2" data-line-number="2"> <span class="kw">summary</span>(lmInt)</a></code></pre></div>
 <pre><code>## 
 ## Call:
 ## lm(formula = freqC ~ Sexe + Sport_fac + Sexe * Sport_fac, data = freq)
@@ -725,9 +748,37 @@ $(document).ready(function () {
 ## Residual standard error: 1.713 on 30 degrees of freedom
 ## Multiple R-squared:  0.8571, Adjusted R-squared:  0.8143 
 ## F-statistic:    20 on 9 and 30 DF,  p-value: 2.327e-10</code></pre>
-<p>Question : <code>Y a-t-il un effet de la pratique sportive  sur la fréquence cardiaque au repos ?'' \\ Question :</code>Y a-t-il un effet du sexe sur la fréquence cardiaque au repos ?’’</p>
-<p>Question : ``Y a-t-il un effet du sexe en interaction avec la pratique sportive sur la fréquence cardiaque au repos ?’’</p>
-<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb46-1" data-line-number="1"> <span class="kw">anova</span>(lmInt)</a></code></pre></div>
+<p>Test du modèle complet</p>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb50-1" data-line-number="1"><span class="kw">autoplot</span>(lmInt)</a></code></pre></div>
+<p><img src="anova2_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb51-1" data-line-number="1"><span class="kw">anova</span>(lm_<span class="dv">0</span>, lmInt)</a></code></pre></div>
+<pre><code>## Analysis of Variance Table
+## 
+## Model 1: freqC ~ 1
+## Model 2: freqC ~ Sexe + Sport_fac + Sexe * Sport_fac
+##   Res.Df   RSS Df Sum of Sq      F    Pr(&gt;F)    
+## 1     39 615.9                                  
+## 2     30  88.0  9     527.9 19.996 2.327e-10 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<ol style="list-style-type: decimal">
+<li>Question : ``Y a-t-il un effet de la pratique sportive sur la fréquence cardiaque au repos ?’’ \</li>
+<li><p>Question : ``Y a-t-il un effet du sexe sur la fréquence cardiaque au repos ?’’</p></li>
+<li><p>Question : ``Y a-t-il un effet du sexe en interaction avec la pratique sportive sur la fréquence cardiaque au repos ?’’</p></li>
+</ol>
+<p>On commence toujours par tester l’effet de l’interaction.</p>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb53-1" data-line-number="1">lm_<span class="dv">12</span> &lt;-<span class="st"> </span><span class="kw">lm</span>(freqC<span class="op">~</span><span class="st"> </span>Sport_fac <span class="op">+</span><span class="st"> </span>Sexe, <span class="dt">data =</span> freq)</a>
+<a class="sourceLine" id="cb53-2" data-line-number="2"><span class="kw">anova</span>(lm_<span class="dv">12</span>, lmInt)</a></code></pre></div>
+<pre><code>## Analysis of Variance Table
+## 
+## Model 1: freqC ~ Sport_fac + Sexe
+## Model 2: freqC ~ Sexe + Sport_fac + Sexe * Sport_fac
+##   Res.Df    RSS Df Sum of Sq     F   Pr(&gt;F)   
+## 1     34 139.85                               
+## 2     30  88.00  4     51.85 4.419 0.006299 **
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb55-1" data-line-number="1"> <span class="kw">anova</span>(lmInt)</a></code></pre></div>
 <pre><code>## Analysis of Variance Table
 ## 
 ## Response: freqC
@@ -738,7 +789,7 @@ $(document).ready(function () {
 ## Residuals      30  88.00   2.933                      
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb48-1" data-line-number="1"> <span class="kw">Anova</span>(lmInt, <span class="dt">type=</span><span class="st">&quot;II&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb57-1" data-line-number="1"> <span class="kw">Anova</span>(lmInt, <span class="dt">type=</span><span class="st">&quot;II&quot;</span>)</a></code></pre></div>
 <pre><code>## Anova Table (Type II tests)
 ## 
 ## Response: freqC
@@ -749,11 +800,11 @@ $(document).ready(function () {
 ## Residuals       88.00 30                      
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb50-1" data-line-number="1"><span class="kw">autoplot</span>(lmInt, <span class="dt">data =</span> freq)</a></code></pre></div>
-<p><img src="anova2_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb59-1" data-line-number="1"><span class="kw">autoplot</span>(lmInt, <span class="dt">data =</span> freq)</a></code></pre></div>
+<p><img src="anova2_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <p>Modèle sans interaction :</p>
-<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb51-1" data-line-number="1"> lm1 &lt;-<span class="st"> </span><span class="kw">lm</span>(freqC<span class="op">~</span>Sexe<span class="op">+</span>Sport_fac, <span class="dt">data=</span>freq)</a>
-<a class="sourceLine" id="cb51-2" data-line-number="2"> <span class="kw">summary</span>(lm1)</a></code></pre></div>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb60-1" data-line-number="1"> lm1 &lt;-<span class="st"> </span><span class="kw">lm</span>(freqC<span class="op">~</span>Sexe<span class="op">+</span>Sport_fac, <span class="dt">data=</span>freq)</a>
+<a class="sourceLine" id="cb60-2" data-line-number="2"> <span class="kw">summary</span>(lm1)</a></code></pre></div>
 <pre><code>## 
 ## Call:
 ## lm(formula = freqC ~ Sexe + Sport_fac, data = freq)
@@ -777,7 +828,7 @@ $(document).ready(function () {
 ## Multiple R-squared:  0.7729, Adjusted R-squared:  0.7395 
 ## F-statistic: 23.15 on 5 and 34 DF,  p-value: 4.63e-10</code></pre>
 <p>Question : <code>Y a-t-il un effet de la pratique sportive  sur la fréquence cardiaque au repos ?''\\ Question :</code>Y a-t-il un effet du sexe sur la fréquence cardiaque au repos ?’’</p>
-<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb53-1" data-line-number="1"> <span class="kw">anova</span>(lm1)</a></code></pre></div>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb62-1" data-line-number="1"> <span class="kw">anova</span>(lm1)</a></code></pre></div>
 <pre><code>## Analysis of Variance Table
 ## 
 ## Response: freqC
@@ -787,7 +838,7 @@ $(document).ready(function () {
 ## Residuals 34 139.85   4.113                      
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb55-1" data-line-number="1"> <span class="kw">Anova</span>(lm1, <span class="dt">type=</span><span class="st">&quot;II&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb64-1" data-line-number="1"> <span class="kw">Anova</span>(lm1, <span class="dt">type=</span><span class="st">&quot;II&quot;</span>)</a></code></pre></div>
 <pre><code>## Anova Table (Type II tests)
 ## 
 ## Response: freqC
@@ -797,16 +848,20 @@ $(document).ready(function () {
 ## Residuals 139.85 34                      
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb57-1" data-line-number="1"><span class="kw">autoplot</span>(lm1)</a></code></pre></div>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb66-1" data-line-number="1"><span class="kw">autoplot</span>(lm1)</a></code></pre></div>
 <p><img src="anova2_files/figure-html/anova_lmout_test-1.png" width="672" /></p>
 </div>
 </div>
 <div id="anova-deux-facteurs-plan-desequilibre" class="section level1">
 <h1>Anova deux facteurs, plan déséquilibré</h1>
-<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb58-1" data-line-number="1"> freq2 &lt;-<span class="st"> </span><span class="kw">read.table</span>(<span class="dt">file =</span> <span class="st">&quot;data/FreqCardiaqueDes1.txt&quot;</span>, <span class="dt">header =</span> T)</a>
-<a class="sourceLine" id="cb58-2" data-line-number="2">freq2 &lt;-<span class="st"> </span>freq2 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">Sport_fac =</span> <span class="kw">as.factor</span>(Sport))</a>
-<a class="sourceLine" id="cb58-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb58-4" data-line-number="4">freq2 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">count</span>(Sport, Sexe) </a></code></pre></div>
+<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb67-1" data-line-number="1"> freq2 &lt;-<span class="st"> </span><span class="kw">read.table</span>(<span class="dt">file =</span> <span class="st">&quot;data/FreqCardiaqueDes1.txt&quot;</span>, <span class="dt">header =</span> T)</a>
+<a class="sourceLine" id="cb67-2" data-line-number="2">freq2 &lt;-<span class="st"> </span>freq2 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">Sport_fac =</span> <span class="kw">as.factor</span>(Sport))</a>
+<a class="sourceLine" id="cb67-3" data-line-number="3"><span class="kw">table</span>(freq2<span class="op">$</span>Sexe, freq2<span class="op">$</span>Sport)</a></code></pre></div>
+<pre><code>##    
+##     1 2 3 4 5
+##   F 6 3 5 3 2
+##   M 3 2 6 5 5</code></pre>
+<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb69-1" data-line-number="1">freq2 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">count</span>(Sport, Sexe) </a></code></pre></div>
 <pre><code>## # A tibble: 10 x 3
 ##    Sport Sexe      n
 ##    &lt;int&gt; &lt;fct&gt; &lt;int&gt;
@@ -821,7 +876,7 @@ $(document).ready(function () {
 ##  9     5 F         2
 ## 10     5 M         5</code></pre>
 <p>Moyennes et écart-types par groupes :</p>
-<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb60-1" data-line-number="1">freq2 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(Sport) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summarise</span>(<span class="dt">mean_freq =</span> <span class="kw">mean</span>(freqC)) </a></code></pre></div>
+<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb71-1" data-line-number="1">freq2 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(Sport) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summarise</span>(<span class="dt">mean_freq =</span> <span class="kw">mean</span>(freqC)) </a></code></pre></div>
 <pre><code>## # A tibble: 5 x 2
 ##   Sport mean_freq
 ##   &lt;int&gt;     &lt;dbl&gt;
@@ -830,13 +885,13 @@ $(document).ready(function () {
 ## 3     3      85.4
 ## 4     4      85.4
 ## 5     5      91.3</code></pre>
-<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb62-1" data-line-number="1">freq2 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(Sexe) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summarise</span>(<span class="dt">mean_freq =</span> <span class="kw">mean</span>(freqC)) </a></code></pre></div>
+<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb73-1" data-line-number="1">freq2 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(Sexe) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summarise</span>(<span class="dt">mean_freq =</span> <span class="kw">mean</span>(freqC)) </a></code></pre></div>
 <pre><code>## # A tibble: 2 x 2
 ##   Sexe  mean_freq
 ##   &lt;fct&gt;     &lt;dbl&gt;
 ## 1 F          83.7
 ## 2 M          85.9</code></pre>
-<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb64-1" data-line-number="1">freq2 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(Sport, Sexe) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summarise</span>(<span class="dt">mean_freq =</span> <span class="kw">mean</span>(freqC)) </a></code></pre></div>
+<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb75-1" data-line-number="1">freq2 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(Sport, Sexe) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summarise</span>(<span class="dt">mean_freq =</span> <span class="kw">mean</span>(freqC)) </a></code></pre></div>
 <pre><code>## # A tibble: 10 x 3
 ## # Groups:   Sport [5]
 ##    Sport Sexe  mean_freq
@@ -851,41 +906,88 @@ $(document).ready(function () {
 ##  8     4 M          85.2
 ##  9     5 F          93  
 ## 10     5 M          90.6</code></pre>
-<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb66-1" data-line-number="1">p1 &lt;-<span class="st"> </span><span class="kw">ggplot</span>(freq2, <span class="kw">aes</span>(<span class="dt">y=</span>freqC, <span class="dt">x =</span> Sport_fac)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_boxplot</span>()</a>
-<a class="sourceLine" id="cb66-2" data-line-number="2">  </a>
-<a class="sourceLine" id="cb66-3" data-line-number="3">p2 &lt;-<span class="st"> </span><span class="kw">ggplot</span>(freq2, <span class="kw">aes</span>(<span class="dt">y=</span>freqC, <span class="dt">x =</span> Sexe)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_boxplot</span>()</a>
-<a class="sourceLine" id="cb66-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb66-5" data-line-number="5"><span class="kw">ggarrange</span>(p1,p2<span class="op">+</span><span class="kw">rremove</span>(<span class="st">&#39;ylab&#39;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb77-1" data-line-number="1">p1 &lt;-<span class="st"> </span><span class="kw">ggplot</span>(freq2, <span class="kw">aes</span>(<span class="dt">y=</span>freqC, <span class="dt">x =</span> Sport_fac)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_boxplot</span>()</a>
+<a class="sourceLine" id="cb77-2" data-line-number="2">  </a>
+<a class="sourceLine" id="cb77-3" data-line-number="3">p2 &lt;-<span class="st"> </span><span class="kw">ggplot</span>(freq2, <span class="kw">aes</span>(<span class="dt">y=</span>freqC, <span class="dt">x =</span> Sexe)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_boxplot</span>()</a>
+<a class="sourceLine" id="cb77-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb77-5" data-line-number="5"><span class="kw">ggarrange</span>(p1,p2<span class="op">+</span><span class="kw">rremove</span>(<span class="st">&#39;ylab&#39;</span>))</a></code></pre></div>
 <p><img src="anova2_files/figure-html/anova_desc_boxplot-1.png" width="672" /></p>
-<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb67-1" data-line-number="1">freq2 <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb67-2" data-line-number="2"><span class="st">  </span><span class="kw">ggplot</span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb67-3" data-line-number="3"><span class="st">  </span><span class="kw">aes</span>(<span class="dt">x =</span> Sport_fac, <span class="dt">color =</span> Sexe, <span class="dt">group =</span> Sexe, <span class="dt">y =</span> freqC) <span class="op">+</span></a>
-<a class="sourceLine" id="cb67-4" data-line-number="4"><span class="st">  </span><span class="kw">stat_summary</span>(<span class="dt">fun.y =</span> mean, <span class="dt">geom =</span> <span class="st">&quot;point&quot;</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb67-5" data-line-number="5"><span class="st">  </span><span class="kw">stat_summary</span>(<span class="dt">fun.y =</span> mean, <span class="dt">geom =</span> <span class="st">&quot;line&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb78-1" data-line-number="1">freq2 <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb78-2" data-line-number="2"><span class="st">  </span><span class="kw">ggplot</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb78-3" data-line-number="3"><span class="st">  </span><span class="kw">aes</span>(<span class="dt">x =</span> Sport_fac, <span class="dt">color =</span> Sexe, <span class="dt">group =</span> Sexe, <span class="dt">y =</span> freqC) <span class="op">+</span></a>
+<a class="sourceLine" id="cb78-4" data-line-number="4"><span class="st">  </span><span class="kw">stat_summary</span>(<span class="dt">fun.y =</span> mean, <span class="dt">geom =</span> <span class="st">&quot;point&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb78-5" data-line-number="5"><span class="st">  </span><span class="kw">stat_summary</span>(<span class="dt">fun.y =</span> mean, <span class="dt">geom =</span> <span class="st">&quot;line&quot;</span>)</a></code></pre></div>
 <p><img src="anova2_files/figure-html/anova_desc_boxplot-2.png" width="672" /></p>
-<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb68-1" data-line-number="1"> lm2 &lt;-<span class="st"> </span><span class="kw">lm</span>(freqC<span class="op">~</span>Sexe<span class="op">+</span>Sport, <span class="dt">data=</span>freq2)</a>
-<a class="sourceLine" id="cb68-2" data-line-number="2"><span class="kw">autoplot</span>(lm2)</a></code></pre></div>
+<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb79-1" data-line-number="1"> lm2 &lt;-<span class="st"> </span><span class="kw">lm</span>(freqC<span class="op">~</span><span class="st">  </span>Sport_fac  <span class="op">+</span><span class="st"> </span>Sexe <span class="op">+</span><span class="st"> </span>Sexe<span class="op">:</span>Sport_fac, <span class="dt">data=</span>freq2)</a>
+<a class="sourceLine" id="cb79-2" data-line-number="2"><span class="kw">autoplot</span>(lm2)</a></code></pre></div>
 <p><img src="anova2_files/figure-html/anova_lm2_des-1.png" width="672" /></p>
-<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb69-1" data-line-number="1"> <span class="kw">anova</span>(lm2)</a></code></pre></div>
+<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb80-1" data-line-number="1"> <span class="kw">anova</span>(lm2)</a></code></pre></div>
 <pre><code>## Analysis of Variance Table
 ## 
 ## Response: freqC
-##           Df Sum Sq Mean Sq F value    Pr(&gt;F)    
-## Sexe       1  46.88   46.88  9.9993  0.003122 ** 
-## Sport      1 408.02  408.02 87.0269 2.944e-11 ***
-## Residuals 37 173.47    4.69                      
+##                Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+## Sport_fac       4 507.50 126.876 76.1256 2.863e-15 ***
+## Sexe            1   1.14   1.143  0.6857    0.4142    
+## Sport_fac:Sexe  4  69.73  17.432 10.4593 1.995e-05 ***
+## Residuals      30  50.00   1.667                      
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb71-1" data-line-number="1"> <span class="kw">Anova</span>(lm2, <span class="dt">type=</span><span class="st">&quot;II&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb82-1" data-line-number="1"> <span class="kw">Anova</span>(lm2, <span class="dt">type=</span><span class="st">&quot;II&quot;</span>)</a></code></pre></div>
 <pre><code>## Anova Table (Type II tests)
 ## 
 ## Response: freqC
-##           Sum Sq Df F value    Pr(&gt;F)    
-## Sexe        1.22  1   0.260    0.6131    
-## Sport     408.02  1  87.027 2.944e-11 ***
-## Residuals 173.47 37                      
+##                Sum Sq Df F value    Pr(&gt;F)    
+## Sport_fac      461.77  4 69.2648 1.025e-14 ***
+## Sexe             1.14  1  0.6857    0.4142    
+## Sport_fac:Sexe  69.73  4 10.4593 1.995e-05 ***
+## Residuals       50.00 30                      
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>On change l’ordre des facteurs</p>
+<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb84-1" data-line-number="1"> lm2 &lt;-<span class="st"> </span><span class="kw">lm</span>(freqC<span class="op">~</span><span class="st">  </span>Sport_fac <span class="op">+</span><span class="st"> </span>Sexe <span class="op">+</span><span class="st"> </span>Sexe<span class="op">:</span>Sport_fac, <span class="dt">data=</span>freq2)</a>
+<a class="sourceLine" id="cb84-2" data-line-number="2"><span class="kw">autoplot</span>(lm2)</a></code></pre></div>
+<p><img src="anova2_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb85-1" data-line-number="1"> <span class="kw">anova</span>(lm2)</a></code></pre></div>
+<pre><code>## Analysis of Variance Table
+## 
+## Response: freqC
+##                Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+## Sport_fac       4 507.50 126.876 76.1256 2.863e-15 ***
+## Sexe            1   1.14   1.143  0.6857    0.4142    
+## Sport_fac:Sexe  4  69.73  17.432 10.4593 1.995e-05 ***
+## Residuals      30  50.00   1.667                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb87-1" data-line-number="1"><span class="kw">emmeans</span>(lm2, </a>
+<a class="sourceLine" id="cb87-2" data-line-number="2">        pairwise<span class="op">~</span>Sport_fac,</a>
+<a class="sourceLine" id="cb87-3" data-line-number="3">        <span class="dt">adjust =</span> <span class="st">&quot;hochberg&quot;</span>) </a></code></pre></div>
+<pre><code>## NOTE: Results may be misleading due to involvement in interactions</code></pre>
+<pre><code>## $emmeans
+##  Sport_fac emmean    SE df lower.CL upper.CL
+##  1           80.5 0.456 30     79.6     81.4
+##  2           81.5 0.589 30     80.3     82.7
+##  3           85.2 0.391 30     84.4     86.0
+##  4           85.4 0.471 30     84.5     86.4
+##  5           91.8 0.540 30     90.7     92.9
+## 
+## Results are averaged over the levels of: Sexe 
+## Confidence level used: 0.95 
+## 
+## $contrasts
+##  contrast estimate    SE df t.ratio p.value
+##  1 - 2      -1.000 0.745 30  -1.342 0.3796 
+##  1 - 3      -4.667 0.601 30  -7.766 &lt;.0001 
+##  1 - 4      -4.933 0.656 30  -7.518 &lt;.0001 
+##  1 - 5     -11.300 0.707 30 -15.981 &lt;.0001 
+##  2 - 3      -3.667 0.707 30  -5.185 &lt;.0001 
+##  2 - 4      -3.933 0.755 30  -5.212 &lt;.0001 
+##  2 - 5     -10.300 0.799 30 -12.886 &lt;.0001 
+##  3 - 4      -0.267 0.612 30  -0.435 0.6663 
+##  3 - 5      -6.633 0.667 30  -9.950 &lt;.0001 
+##  4 - 5      -6.367 0.717 30  -8.881 &lt;.0001 
+## 
+## Results are averaged over the levels of: Sexe 
+## P value adjustment: hochberg method for 10 tests</code></pre>
 </div>
 
 

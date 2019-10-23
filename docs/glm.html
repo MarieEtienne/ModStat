@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Modèle linéaire Généralisé</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  { background-color: #f8f8f8; }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #c4a000; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #000000; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #000000; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #000000; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 54px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h2 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h3 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h4 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h5 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h6 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Modélsation statistique</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="https://github.com/MarieEtienne/ModStat">
+    <span class="fa fa-github"></span>
+     
+    dépôt github
+  </a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="index.html">Présentation</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fa fa-child"></span>
+     
+    Introduction à R
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="intror_presentation.html">Présentation du logiciel R</a>
+    </li>
+    <li>
+      <a href="intror_rstudio.html">Environnement RStudio</a>
+    </li>
+    <li>
+      <a href="intror_manip.html">Manipulation de données</a>
+    </li>
+    <li>
+      <a href="intror_visu.html">Visualisation</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fa fa-tilde"></span>
+     
+    Modélisation statistique
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Comp_moyenne.html">Modèle de comparaison de moyennes</a>
+    </li>
+    <li>
+      <a href="anova2.html">Modèle d'analyse de variance</a>
+    </li>
+    <li>
+      <a href="Regression_usAir.html">Modèle de régression linéaire</a>
+    </li>
+    <li>
+      <a href="glm.html">Modèle linéaire généralisé</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Modèle linéaire Généralisé</h1>
+
+</div>
+
+
+<div id="les-grenouilles-a-pattes-rouges-de-californie" class="section level2">
+<h2>Les grenouilles à pattes rouges de Californie</h2>
+<div id="presentation-du-probleme" class="section level3">
+<h3>Présentation du problème</h3>
+<p>Les auteurs ont collecté dans la littérature et dans les archives des muséums, des informations sur la présence ou l’absence de grenouilles sauvages dans 237 points d’eau de Californie. Pour chacun des sites, on dispose donc de sa position (longitude + latitude) de la source de l’information (Museum, Literature, PersCom ou Field Note) ainsi que de l’information sur la présence/absence de grenouilles.\ On cherche à caractériser l’aire de répartition de cette espèce en étudiant comment varie la probabilité de trouver des grenouilles dans un point d’eau en fonction de la latitude et de la longitude. On pourra aussi se demander si les différentes sources d’information documentent les mêmes &quot; types &quot; de points d’eau. \ Les données se trouvent dans le fichier Grenouille.don \ Les colonnes sont : Source Source2 presabs(Présence/Absence) latitude longitude \</p>
+</div>
+<div id="analyse-descriptive" class="section level3">
+<h3>Analyse descriptive</h3>
+<p>Les données sont disponibles sur <a href="data/Grenouille.don">grenouille</a></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">Grenouille &lt;-<span class="st"> </span><span class="kw">read.table</span>(<span class="kw">file.path</span>(<span class="st">&#39;data&#39;</span>, <span class="st">&#39;Grenouille.don&#39;</span>), <span class="dt">sep=</span><span class="st">&quot;&quot;</span>,<span class="dt">header=</span><span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2">n &lt;-<span class="st"> </span><span class="kw">nrow</span>(Grenouille)</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="kw">summary</span>(Grenouille)</a></code></pre></div>
+<pre><code>##         Source       Source2   Status     Latitude       Longitude     
+##  FieldNote : 10   MVZ    :59   A:113   Min.   :32.64   Min.   :-123.0  
+##  Literature:  7   Perscom:31   P:123   1st Qu.:34.39   1st Qu.:-121.8  
+##  Museum    :188   LACM   :26           Median :35.47   Median :-120.4  
+##  Perscom   : 31   CAS-SU :15           Mean   :35.92   Mean   :-120.1  
+##                   SDNHM  :15           3rd Qu.:37.72   3rd Qu.:-118.7  
+##                   UMMZ   :12           Max.   :40.49   Max.   :-116.4  
+##                   (Other):78</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">Grenouille <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">pres_bin =</span> <span class="kw">ifelse</span>(Status<span class="op">==</span><span class="st">&#39;A&#39;</span>, <span class="dv">0</span>, <span class="dv">1</span>)) -&gt;<span class="st"> </span>Grenouille</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb3-3" data-line-number="3">p &lt;-<span class="st"> </span><span class="kw">ggplot</span>(<span class="dt">data=</span>Grenouille, <span class="kw">aes</span>(<span class="dt">x=</span>Latitude, <span class="dt">y=</span>pres_bin)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>()</a>
+<a class="sourceLine" id="cb3-4" data-line-number="4">p</a></code></pre></div>
+<p><img src="glm_files/figure-html/desc-1.png" width="672" /></p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">p &lt;-<span class="st"> </span><span class="kw">ggplot</span>(<span class="dt">data=</span>Grenouille, <span class="kw">aes</span>(<span class="dt">x=</span>Longitude, <span class="dt">y=</span>pres_bin)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>()</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">p</a></code></pre></div>
+<p><img src="glm_files/figure-html/desc-2.png" width="672" /></p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">p &lt;-<span class="st"> </span><span class="kw">ggplot</span>(<span class="dt">data=</span>Grenouille, <span class="kw">aes</span>(<span class="dt">y =</span> Latitude, <span class="dt">x =</span> Longitude, <span class="dt">col =</span> Status)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>() <span class="op">+</span><span class="st"> </span><span class="kw">coord_fixed</span>()</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">p</a></code></pre></div>
+<p><img src="glm_files/figure-html/desc-3.png" width="672" /></p>
+</div>
+<div id="etude-de-leffet-latitude-seule" class="section level3">
+<h3>Etude de l’effet Latitude seule</h3>
+<p><span class="math display">\[ Y_k  \overset{i.i.d}{\sim}\mathcal{B}(p_k), \quad logit(p_k)  = \beta_0 + \beta_1 x^{(1)}_k   \]</span></p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">glm1  &lt;-<span class="st">  </span><span class="kw">glm</span>(Status <span class="op">~</span><span class="st"> </span>Latitude, <span class="dt">family =</span> binomial, <span class="dt">data=</span>Grenouille)</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb6-3" data-line-number="3">glm0 &lt;-<span class="st"> </span><span class="kw">glm</span>(Status <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">family =</span> binomial, <span class="dt">data=</span>Grenouille)</a>
+<a class="sourceLine" id="cb6-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="kw">summary</span>(glm1)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## glm(formula = Status ~ Latitude, family = binomial, data = Grenouille)
+## 
+## Deviance Residuals: 
+##    Min      1Q  Median      3Q     Max  
+## -1.635  -1.078   0.951   1.096   1.308  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)   
+## (Intercept) -7.32756    2.52734  -2.899  0.00374 **
+## Latitude     0.20645    0.07034   2.935  0.00334 **
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 326.74  on 235  degrees of freedom
+## Residual deviance: 317.81  on 234  degrees of freedom
+## AIC: 321.81
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw">anova</span>(glm0, glm1, <span class="dt">test=</span><span class="st">&#39;Chisq&#39;</span>)</a></code></pre></div>
+<pre><code>## Analysis of Deviance Table
+## 
+## Model 1: Status ~ 1
+## Model 2: Status ~ Latitude
+##   Resid. Df Resid. Dev Df Deviance Pr(&gt;Chi)   
+## 1       235     326.74                        
+## 2       234     317.81  1   8.9292 0.002806 **
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</div>
+<div id="introduction-de-la-longitude" class="section level3">
+<h3>Introduction de la longitude</h3>
+<p><span class="math display">\[ Y_{k}  \sim \mathcal{B}(p_k), \quad  logit(p_k)  = \beta_0 + \beta_1 x^{(1)}_k + \beta_2 x^{(2)}_k. \]</span></p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">glm12  &lt;-<span class="st">  </span><span class="kw">glm</span>(Status<span class="op">~</span>Latitude<span class="op">+</span>Longitude, <span class="dt">family=</span>binomial, <span class="dt">data=</span>Grenouille)</a>
+<a class="sourceLine" id="cb10-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb10-3" data-line-number="3"><span class="kw">anova</span>(glm1, glm12, <span class="dt">test=</span><span class="st">&#39;Chisq&#39;</span>)</a></code></pre></div>
+<pre><code>## Analysis of Deviance Table
+## 
+## Model 1: Status ~ Latitude
+## Model 2: Status ~ Latitude + Longitude
+##   Resid. Df Resid. Dev Df Deviance  Pr(&gt;Chi)    
+## 1       234     317.81                          
+## 2       233     146.81  1      171 &lt; 2.2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">glm2  &lt;-<span class="st">  </span><span class="kw">glm</span>(Status <span class="op">~</span><span class="st"> </span>Longitude, <span class="dt">family=</span>binomial, <span class="dt">data=</span>Grenouille)</a>
+<a class="sourceLine" id="cb12-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb12-3" data-line-number="3"><span class="kw">anova</span>(glm0, glm2)</a></code></pre></div>
+<pre><code>## Analysis of Deviance Table
+## 
+## Model 1: Status ~ 1
+## Model 2: Status ~ Longitude
+##   Resid. Df Resid. Dev Df Deviance
+## 1       235     326.74            
+## 2       234     246.85  1   79.892</code></pre>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="kw">anova</span>(glm0, glm1)</a></code></pre></div>
+<pre><code>## Analysis of Deviance Table
+## 
+## Model 1: Status ~ 1
+## Model 2: Status ~ Latitude
+##   Resid. Df Resid. Dev Df Deviance
+## 1       235     326.74            
+## 2       234     317.81  1   8.9292</code></pre>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw">summary</span>(glm12)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## glm(formula = Status ~ Latitude + Longitude, family = binomial, 
+##     data = Grenouille)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -2.6435  -0.3011   0.2393   0.4404   2.0575  
+## 
+## Coefficients:
+##              Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept) -265.0912    32.1226  -8.252  &lt; 2e-16 ***
+## Latitude      -2.1157     0.3171  -6.671 2.53e-11 ***
+## Longitude     -2.8382     0.3523  -8.056 7.87e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 326.74  on 235  degrees of freedom
+## Residual deviance: 146.81  on 233  degrees of freedom
+## AIC: 152.81
+## 
+## Number of Fisher Scoring iterations: 6</code></pre>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="kw">anova</span>(glm12)</a></code></pre></div>
+<pre><code>## Analysis of Deviance Table
+## 
+## Model: binomial, link: logit
+## 
+## Response: Status
+## 
+## Terms added sequentially (first to last)
+## 
+## 
+##           Df Deviance Resid. Df Resid. Dev
+## NULL                        235     326.74
+## Latitude   1    8.929       234     317.81
+## Longitude  1  171.002       233     146.81</code></pre>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="kw">Anova</span>(glm12)</a></code></pre></div>
+<pre><code>## Analysis of Deviance Table (Type II tests)
+## 
+## Response: Status
+##           LR Chisq Df Pr(&gt;Chisq)    
+## Latitude    100.04  1  &lt; 2.2e-16 ***
+## Longitude   171.00  1  &lt; 2.2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</div>
+</div>
+<div id="etude-des-especes-de-fourmis-dans-la-foret-du-nourragues" class="section level2">
+<h2>Etude des espèces de fourmis dans la forêt du Nourragues</h2>
+<p>Les données sont disponibles sur <a href="data/Fourmis.txt">fourmis</a></p>
+<div id="presentation-du-protocole" class="section level3">
+<h3>Présentation du protocole</h3>
+Le but de l’étude présentée est d’étudier la diversité des fourmis sur le site expérimental des Nourragues en Guyane Française. Le protocole expérimental suivant a été mis en place : on récolte <span class="math inline">\(1m^2\)</span> de litière que l’on pèse. Le poids de litière (variable ) est vu comme un proxy (un indicateur) de l’épaisseur de la litière. On compte ensuite le nombre d’espèces différentes présentes dans l’échantillon (variable ). 50 points d’échantillonage distants d’au moins 10m ont été choisis :
+
+<p>D’autre part, étant donnée la relative petite taille de la forêt d’Inselberg () seuls 20 points d’échantillonnage ont été sélectionnés pour ce site.</p>
+<p>Enfin les conditions de recueil (humides ou sèches, variable ) ont été notées pour tester leur influence sur la présence des fourmis.</p>
+</div>
+<div id="analyse-descriptive-1" class="section level3">
+<h3>Analyse descriptive</h3>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">Fourmis &lt;-<span class="st"> </span><span class="kw">read.table</span>(<span class="kw">file.path</span>(<span class="st">&#39;data&#39;</span>,<span class="st">&#39;Fourmis.txt&#39;</span>),<span class="dt">header=</span>T, <span class="dt">sep=</span><span class="st">&#39;,&#39;</span>)</a>
+<a class="sourceLine" id="cb22-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb22-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb22-4" data-line-number="4">Fourmis <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(Site, Conditions) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summarise</span>(<span class="kw">n</span>())</a></code></pre></div>
+<pre><code>## # A tibble: 8 x 3
+## # Groups:   Site [4]
+##   Site  Conditions `n()`
+##   &lt;fct&gt; &lt;fct&gt;      &lt;int&gt;
+## 1 FLWT  Dry           24
+## 2 FLWT  Wet           26
+## 3 FTWT  Dry           24
+## 4 FTWT  Wet           26
+## 5 GPWT  Dry           22
+## 6 GPWT  Wet           28
+## 7 INWT  Dry           13
+## 8 INWT  Wet            7</code></pre>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1"><span class="kw">ggplot</span>(<span class="dt">data=</span> Fourmis, <span class="kw">aes</span>(<span class="dt">x=</span>Site, <span class="dt">y=</span>Effectifs, <span class="dt">col=</span> Conditions)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_boxplot</span>() </a></code></pre></div>
+<p><img src="glm_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="kw">ggplot</span>(<span class="dt">data=</span> Fourmis, <span class="kw">aes</span>(<span class="dt">x=</span>Weight, <span class="dt">y=</span>Effectifs, <span class="dt">col=</span> Conditions)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>() </a></code></pre></div>
+<p><img src="glm_files/figure-html/unnamed-chunk-3-2.png" width="672" /></p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1">Fourmis <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">log_weight=</span> <span class="kw">log</span>(Weight)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>log_weight, <span class="dt">y=</span>Effectifs, <span class="dt">col=</span> Conditions)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>() </a></code></pre></div>
+<p><img src="glm_files/figure-html/unnamed-chunk-3-3.png" width="672" /></p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1">Fourmis <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">log_weight=</span> <span class="kw">log</span>(Weight), <span class="dt">log_effectif =</span> <span class="kw">log</span>(Effectifs)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>log_weight, <span class="dt">y=</span>log_effectif, <span class="dt">col=</span> Conditions)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>() </a></code></pre></div>
+<p><img src="glm_files/figure-html/unnamed-chunk-3-4.png" width="672" /></p>
+On souhaite étudier les variables qui influencent potentiellement le nombre d’espèces de fourmis présentes dans le milieu. A l’aide de graphiques bien choisis, proposer des variables candidates.
+
+<p>Que peut-on dire du plan d’expérience ?</p>
+</div>
+<div id="modelisation" class="section level3">
+<h3>Modélisation</h3>
+<div id="effet-des-conditions-de-recueil-et-du-site" class="section level4">
+<h4>Effet des conditions de recueil et du site</h4>
+<p>On modélise des comptages par des lois de Poisson</p>
+<p><span class="math display">\[Y_{ijk}  \overset{i.i.d}{\sim} \mathcal{P}(\lambda_{ij} E_{ijk})\]</span></p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1">glmInt &lt;-<span class="st">  </span><span class="kw">glm</span>(Effectifs<span class="op">~</span>Site<span class="op">*</span>Conditions,<span class="dt">offset=</span><span class="kw">log</span>(Weight),</a>
+<a class="sourceLine" id="cb28-2" data-line-number="2">             <span class="dt">family=</span><span class="st">&quot;poisson&quot;</span>, <span class="dt">data=</span>Fourmis )</a>
+<a class="sourceLine" id="cb28-3" data-line-number="3"><span class="kw">summary</span>(glmInt)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## glm(formula = Effectifs ~ Site * Conditions, family = &quot;poisson&quot;, 
+##     data = Fourmis, offset = log(Weight))
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -3.2267  -0.9268  -0.1522   0.8252   3.6257  
+## 
+## Coefficients:
+##                        Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)             0.49531    0.04969   9.968  &lt; 2e-16 ***
+## SiteFTWT               -0.55200    0.08425  -6.552 5.69e-11 ***
+## SiteGPWT               -0.74225    0.08857  -8.380  &lt; 2e-16 ***
+## SiteINWT               -0.38293    0.09727  -3.937 8.26e-05 ***
+## ConditionsWet          -0.02802    0.07132  -0.393  0.69438    
+## SiteFTWT:ConditionsWet -0.37426    0.12476  -3.000  0.00270 ** 
+## SiteGPWT:ConditionsWet  0.16746    0.11880   1.410  0.15866    
+## SiteINWT:ConditionsWet  0.47387    0.14148   3.349  0.00081 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for poisson family taken to be 1)
+## 
+##     Null deviance: 534.13  on 169  degrees of freedom
+## Residual deviance: 301.41  on 162  degrees of freedom
+## AIC: 1017.2
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1"><span class="kw">anova</span>(glmInt)</a></code></pre></div>
+<pre><code>## Analysis of Deviance Table
+## 
+## Model: poisson, link: log
+## 
+## Response: Effectifs
+## 
+## Terms added sequentially (first to last)
+## 
+## 
+##                 Df Deviance Resid. Df Resid. Dev
+## NULL                              169     534.13
+## Site             3  201.731       166     332.40
+## Conditions       1    0.000       165     332.40
+## Site:Conditions  3   30.994       162     301.41</code></pre>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1"><span class="kw">Anova</span>(glmInt)</a></code></pre></div>
+<pre><code>## Analysis of Deviance Table (Type II tests)
+## 
+## Response: Effectifs
+##                 LR Chisq Df Pr(&gt;Chisq)    
+## Site             200.543  3  &lt; 2.2e-16 ***
+## Conditions         0.000  1     0.9883    
+## Site:Conditions   30.994  3  8.526e-07 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</div>
+<div id="effectif-attendu" class="section level4">
+<h4>Effectif attendu</h4>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" data-line-number="1"><span class="kw">library</span>(emmeans)</a>
+<a class="sourceLine" id="cb34-2" data-line-number="2"><span class="kw">emmeans</span>(glmInt,pairwise<span class="op">~</span>Site<span class="op">*</span>Conditions,<span class="dt">adjust=</span><span class="st">&quot;bonferroni&quot;</span>)</a></code></pre></div>
+<pre><code>## $emmeans
+##  Site Conditions  emmean     SE  df asymp.LCL asymp.UCL
+##  FLWT Dry         0.4953 0.0497 Inf    0.3979    0.5927
+##  FTWT Dry        -0.0567 0.0680 Inf   -0.1901    0.0767
+##  GPWT Dry        -0.2469 0.0733 Inf   -0.3907   -0.1032
+##  INWT Dry         0.1124 0.0836 Inf   -0.0515    0.2763
+##  FLWT Wet         0.4673 0.0512 Inf    0.3670    0.5676
+##  FTWT Wet        -0.4590 0.0765 Inf   -0.6089   -0.3091
+##  GPWT Wet        -0.1075 0.0604 Inf   -0.2259    0.0109
+##  INWT Wet         0.5582 0.0891 Inf    0.3836    0.7328
+## 
+## Results are given on the log (not the response) scale. 
+## Confidence level used: 0.95 
+## 
+## $contrasts
+##  contrast            estimate     SE  df z.ratio p.value
+##  FLWT,Dry - FTWT,Dry   0.5520 0.0843 Inf  6.552  &lt;.0001 
+##  FLWT,Dry - GPWT,Dry   0.7423 0.0886 Inf  8.380  &lt;.0001 
+##  FLWT,Dry - INWT,Dry   0.3829 0.0973 Inf  3.937  0.0023 
+##  FLWT,Dry - FLWT,Wet   0.0280 0.0713 Inf  0.393  1.0000 
+##  FLWT,Dry - FTWT,Wet   0.9543 0.0912 Inf 10.464  &lt;.0001 
+##  FLWT,Dry - GPWT,Wet   0.6028 0.0782 Inf  7.707  &lt;.0001 
+##  FLWT,Dry - INWT,Wet  -0.0629 0.1020 Inf -0.617  1.0000 
+##  FTWT,Dry - GPWT,Dry   0.1902 0.1000 Inf  1.902  1.0000 
+##  FTWT,Dry - INWT,Dry  -0.1691 0.1078 Inf -1.568  1.0000 
+##  FTWT,Dry - FLWT,Wet  -0.5240 0.0851 Inf -6.155  &lt;.0001 
+##  FTWT,Dry - FTWT,Wet   0.4023 0.1024 Inf  3.930  0.0024 
+##  FTWT,Dry - GPWT,Wet   0.0508 0.0910 Inf  0.558  1.0000 
+##  FTWT,Dry - INWT,Wet  -0.6149 0.1121 Inf -5.486  &lt;.0001 
+##  GPWT,Dry - INWT,Dry  -0.3593 0.1112 Inf -3.231  0.0346 
+##  GPWT,Dry - FLWT,Wet  -0.7142 0.0894 Inf -7.988  &lt;.0001 
+##  GPWT,Dry - FTWT,Wet   0.2120 0.1059 Inf  2.001  1.0000 
+##  GPWT,Dry - GPWT,Wet  -0.1394 0.0950 Inf -1.468  1.0000 
+##  GPWT,Dry - INWT,Wet  -0.8052 0.1154 Inf -6.978  &lt;.0001 
+##  INWT,Dry - FLWT,Wet  -0.3549 0.0980 Inf -3.620  0.0082 
+##  INWT,Dry - FTWT,Wet   0.5714 0.1133 Inf  5.042  &lt;.0001 
+##  INWT,Dry - GPWT,Wet   0.2199 0.1032 Inf  2.132  0.9253 
+##  INWT,Dry - INWT,Wet  -0.4458 0.1222 Inf -3.649  0.0074 
+##  FLWT,Wet - FTWT,Wet   0.9263 0.0920 Inf 10.067  &lt;.0001 
+##  FLWT,Wet - GPWT,Wet   0.5748 0.0792 Inf  7.261  &lt;.0001 
+##  FLWT,Wet - INWT,Wet  -0.0909 0.1027 Inf -0.885  1.0000 
+##  FTWT,Wet - GPWT,Wet  -0.3515 0.0975 Inf -3.607  0.0087 
+##  FTWT,Wet - INWT,Wet  -1.0172 0.1174 Inf -8.664  &lt;.0001 
+##  GPWT,Wet - INWT,Wet  -0.6657 0.1076 Inf -6.185  &lt;.0001 
+## 
+## Results are given on the log (not the response) scale. 
+## P value adjustment: bonferroni method for 28 tests</code></pre>
+</div>
+</div>
+</div>
+<div id="indices-dabondances-pour-le-faux-fletan-du-pacifique" class="section level2">
+<h2>Indices d’abondances pour le faux flétan du pacifique</h2>
+<p>L’objectif est maintenant de construire un indice d’abondance annuel pour le faux flétan du Pacifique , <em>Atheresthes stomias</em> au large de l’ile de Vancouver. Les données <a href="data/GroundfishExtraction.csv">Groundfish</a> contiennent des données de captures par pêche scientifique au chalut de 1996 à 2009. Sont renseignés :</p>
+<ul>
+<li>un identifiant unique <code>FISHING_EVENT_ID</code>,</li>
+<li>l’année <code>YEAR</code></li>
+<li>le mois <code>MONTH</code>,</li>
+<li>le jour <code>DAY</code>,</li>
+<li>le jour, heure de début de chalutage <code>START_TIME</code> et fin <code>END_TIME</code>,</li>
+<li>la durée de chalutage en minutes <code>DURATION</code>,</li>
+<li>la latitude initiale <code>START_LATITUDE</code> et finale <code>END_LATITUDE</code>, de même pour la longitude <code>START_LONGITUDE</code>, <code>END_LATITUDE</code>,</li>
+<li>un identifiant du block pour l’échantillonnage stratifié <code>BLOCK_DESIGNATION</code>,</li>
+<li>une profondeur initiale <code>START_DEPTH</code> et finale <code>END_DEPTH</code>,</li>
+<li>la surface chalutée <code>SWEPT_AREA_KM2</code>,</li>
+<li>l’espèce ciblée <code>TARGET_SPECIES</code>,</li>
+<li>les captures pour ’ espèces <code>DOVER_SOLE</code>, <code>REX_SOLE</code>, <code>ARROWTOOTH_FLOUNDER</code>, <code>PACIFIC_OCEAN_PERCH</code>.</li>
+</ul>
+<div id="faire-une-analyse-descriptive-des-donnees" class="section level3">
+<h3>Faire une analyse descriptive des données</h3>
+<p>On souhaite visualiser un potentiel effet année sur la probabilité de présence mais également sur la capture moyenne lorsque capture il y a.</p>
+<p>Pour la probabilité de trouver du flétan et pour la capture moyenne, peut on suspecter un effet mois ? un effet espèce cible ? un effet durée de chalutage ?</p>
+</div>
+<div id="un-modele-de-presence" class="section level3">
+<h3>Un modèle de présence</h3>
+<p>Ajuster un modèle de présence absence sur les données pour construire une probabilité de présence annuelle. Il faut se méfier des effets potentiels du mois de capture, de la durée de chalutage, de l’espèce cible.</p>
+<p>Attention à construire une probabilité débarassée des déséquilibres expérimentaux.</p>
+</div>
+<div id="un-modele-de-biomasse" class="section level3">
+<h3>Un modèle de biomasse</h3>
+<p>Ajuster un modèle pour les captures positives. En déduire une capture positive moyenne par année.</p>
+</div>
+<div id="un-indice-dabondance" class="section level3">
+<h3>Un indice d’abondance</h3>
+<p>Combiner les deux résultats précédents pour construire une série d’indice d’abondance débarassés des effets indésirables.</p>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
