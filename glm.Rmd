@@ -78,8 +78,16 @@ glm1  <-  glm(Status ~ Latitude, family = binomial, data=Grenouille)
 glm0 <- glm(Status ~ 1, family = binomial, data=Grenouille)
 
 summary(glm1)
-anova(glm0, glm1, test='Chisq')
+anova(glm0, glm1, test = 'Chisq')
 
+```
+
+
+```{r}
+new_data <- data.frame(Latitude = seq(0, 70, by = 0.1))
+new_data %>% mutate(prediction = predict(glm1, newdata = new_data, type = 'response' ) ) -> new_data
+
+ggplot(new_data) + geom_line(aes(x=Latitude, y = prediction)) + geom_point(data=Grenouille, aes(x=Latitude, y = pres_bin)) + xlim(c(33, 40))
 ```
 
 ### Introduction de la longitude
@@ -88,9 +96,9 @@ $$ Y_{k}  \sim \mathcal{B}(p_k), \quad  logit(p_k)  = \beta_0 + \beta_1 x^{(1)}_
 
 
 ```{r}
-glm12  <-  glm(Status~Latitude+Longitude, family=binomial, data=Grenouille)
+glm12  <-  glm(Status~Latitude+Longitude, family=binomial, data = Grenouille)
 
-anova(glm1, glm12, test='Chisq')
+anova(glm1, glm12, test = 'Chisq')
 
 glm2  <-  glm(Status ~ Longitude, family=binomial, data=Grenouille)
 
@@ -98,11 +106,18 @@ anova(glm0, glm2)
 
 anova(glm0, glm1)
 
+anova(glm2, glm12, test = 'Chisq')
+
 summary(glm12)
 anova(glm12)
+
 Anova(glm12)
 ```
 
+```{r}
+Grenouille %>% mutate(pred = predict(glm12, Grenouille, type = 'response' )) -> Grenouille
+ggplot(data = Grenouille) + geom_point(aes(x= Latitude, y = pres_bin) )   + geom_point(aes(x=Latitude, y = pred), col= 'red')
+```
 
 
 ## Etude des espèces de fourmis dans la forêt du Nourragues

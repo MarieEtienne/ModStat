@@ -552,7 +552,7 @@ div.tocify {
 ## AIC: 321.81
 ## 
 ## Number of Fisher Scoring iterations: 4</code></pre>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw">anova</span>(glm0, glm1, <span class="dt">test=</span><span class="st">&#39;Chisq&#39;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw">anova</span>(glm0, glm1, <span class="dt">test =</span> <span class="st">&#39;Chisq&#39;</span>)</a></code></pre></div>
 <pre><code>## Analysis of Deviance Table
 ## 
 ## Model 1: Status ~ 1
@@ -562,13 +562,20 @@ div.tocify {
 ## 2       234     317.81  1   8.9292 0.002806 **
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">new_data &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">Latitude =</span> <span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">70</span>, <span class="dt">by =</span> <span class="fl">0.1</span>))</a>
+<a class="sourceLine" id="cb10-2" data-line-number="2">new_data <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">prediction =</span> <span class="kw">predict</span>(glm1, <span class="dt">newdata =</span> new_data, <span class="dt">type =</span> <span class="st">&#39;response&#39;</span> ) ) -&gt;<span class="st"> </span>new_data</a>
+<a class="sourceLine" id="cb10-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb10-4" data-line-number="4"><span class="kw">ggplot</span>(new_data) <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">x=</span>Latitude, <span class="dt">y =</span> prediction)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>(<span class="dt">data=</span>Grenouille, <span class="kw">aes</span>(<span class="dt">x=</span>Latitude, <span class="dt">y =</span> pres_bin)) <span class="op">+</span><span class="st"> </span><span class="kw">xlim</span>(<span class="kw">c</span>(<span class="dv">33</span>, <span class="dv">40</span>))</a></code></pre></div>
+<pre><code>## Warning: Removed 630 rows containing missing values (geom_path).</code></pre>
+<pre><code>## Warning: Removed 11 rows containing missing values (geom_point).</code></pre>
+<p><img src="glm_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
 </div>
 <div id="introduction-de-la-longitude" class="section level3">
 <h3>Introduction de la longitude</h3>
 <p><span class="math display">\[ Y_{k}  \sim \mathcal{B}(p_k), \quad  logit(p_k)  = \beta_0 + \beta_1 x^{(1)}_k + \beta_2 x^{(2)}_k. \]</span></p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">glm12  &lt;-<span class="st">  </span><span class="kw">glm</span>(Status<span class="op">~</span>Latitude<span class="op">+</span>Longitude, <span class="dt">family=</span>binomial, <span class="dt">data=</span>Grenouille)</a>
-<a class="sourceLine" id="cb10-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb10-3" data-line-number="3"><span class="kw">anova</span>(glm1, glm12, <span class="dt">test=</span><span class="st">&#39;Chisq&#39;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">glm12  &lt;-<span class="st">  </span><span class="kw">glm</span>(Status<span class="op">~</span>Latitude<span class="op">+</span>Longitude, <span class="dt">family=</span>binomial, <span class="dt">data =</span> Grenouille)</a>
+<a class="sourceLine" id="cb13-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb13-3" data-line-number="3"><span class="kw">anova</span>(glm1, glm12, <span class="dt">test =</span> <span class="st">&#39;Chisq&#39;</span>)</a></code></pre></div>
 <pre><code>## Analysis of Deviance Table
 ## 
 ## Model 1: Status ~ Latitude
@@ -578,9 +585,9 @@ div.tocify {
 ## 2       233     146.81  1      171 &lt; 2.2e-16 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">glm2  &lt;-<span class="st">  </span><span class="kw">glm</span>(Status <span class="op">~</span><span class="st"> </span>Longitude, <span class="dt">family=</span>binomial, <span class="dt">data=</span>Grenouille)</a>
-<a class="sourceLine" id="cb12-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb12-3" data-line-number="3"><span class="kw">anova</span>(glm0, glm2)</a></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">glm2  &lt;-<span class="st">  </span><span class="kw">glm</span>(Status <span class="op">~</span><span class="st"> </span>Longitude, <span class="dt">family=</span>binomial, <span class="dt">data=</span>Grenouille)</a>
+<a class="sourceLine" id="cb15-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb15-3" data-line-number="3"><span class="kw">anova</span>(glm0, glm2)</a></code></pre></div>
 <pre><code>## Analysis of Deviance Table
 ## 
 ## Model 1: Status ~ 1
@@ -588,7 +595,7 @@ div.tocify {
 ##   Resid. Df Resid. Dev Df Deviance
 ## 1       235     326.74            
 ## 2       234     246.85  1   79.892</code></pre>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="kw">anova</span>(glm0, glm1)</a></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="kw">anova</span>(glm0, glm1)</a></code></pre></div>
 <pre><code>## Analysis of Deviance Table
 ## 
 ## Model 1: Status ~ 1
@@ -596,7 +603,17 @@ div.tocify {
 ##   Resid. Df Resid. Dev Df Deviance
 ## 1       235     326.74            
 ## 2       234     317.81  1   8.9292</code></pre>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw">summary</span>(glm12)</a></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1"><span class="kw">anova</span>(glm2, glm12, <span class="dt">test =</span> <span class="st">&#39;Chisq&#39;</span>)</a></code></pre></div>
+<pre><code>## Analysis of Deviance Table
+## 
+## Model 1: Status ~ Longitude
+## Model 2: Status ~ Latitude + Longitude
+##   Resid. Df Resid. Dev Df Deviance  Pr(&gt;Chi)    
+## 1       234     246.85                          
+## 2       233     146.81  1   100.04 &lt; 2.2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="kw">summary</span>(glm12)</a></code></pre></div>
 <pre><code>## 
 ## Call:
 ## glm(formula = Status ~ Latitude + Longitude, family = binomial, 
@@ -621,7 +638,7 @@ div.tocify {
 ## AIC: 152.81
 ## 
 ## Number of Fisher Scoring iterations: 6</code></pre>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="kw">anova</span>(glm12)</a></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1"><span class="kw">anova</span>(glm12)</a></code></pre></div>
 <pre><code>## Analysis of Deviance Table
 ## 
 ## Model: binomial, link: logit
@@ -635,7 +652,7 @@ div.tocify {
 ## NULL                        235     326.74
 ## Latitude   1    8.929       234     317.81
 ## Longitude  1  171.002       233     146.81</code></pre>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="kw">Anova</span>(glm12)</a></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="kw">Anova</span>(glm12)</a></code></pre></div>
 <pre><code>## Analysis of Deviance Table (Type II tests)
 ## 
 ## Response: Status
@@ -644,6 +661,9 @@ div.tocify {
 ## Longitude   171.00  1  &lt; 2.2e-16 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1">Grenouille <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">pred =</span> <span class="kw">predict</span>(glm12, Grenouille, <span class="dt">type =</span> <span class="st">&#39;response&#39;</span> )) -&gt;<span class="st"> </span>Grenouille</a>
+<a class="sourceLine" id="cb27-2" data-line-number="2"><span class="kw">ggplot</span>(<span class="dt">data =</span> Grenouille) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">x=</span> Latitude, <span class="dt">y =</span> pres_bin) )   <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">x=</span>Latitude, <span class="dt">y =</span> pred), <span class="dt">col=</span> <span class="st">&#39;red&#39;</span>)</a></code></pre></div>
+<p><img src="glm_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 </div>
 </div>
 <div id="etude-des-especes-de-fourmis-dans-la-foret-du-nourragues" class="section level2">
@@ -658,10 +678,10 @@ Le but de l’étude présentée est d’étudier la diversité des fourmis sur 
 </div>
 <div id="analyse-descriptive-1" class="section level3">
 <h3>Analyse descriptive</h3>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">Fourmis &lt;-<span class="st"> </span><span class="kw">read.table</span>(<span class="kw">file.path</span>(<span class="st">&#39;data&#39;</span>,<span class="st">&#39;Fourmis.txt&#39;</span>),<span class="dt">header=</span>T, <span class="dt">sep=</span><span class="st">&#39;,&#39;</span>)</a>
-<a class="sourceLine" id="cb22-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb22-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb22-4" data-line-number="4">Fourmis <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(Site, Conditions) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summarise</span>(<span class="kw">n</span>())</a></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1">Fourmis &lt;-<span class="st"> </span><span class="kw">read.table</span>(<span class="kw">file.path</span>(<span class="st">&#39;data&#39;</span>,<span class="st">&#39;Fourmis.txt&#39;</span>),<span class="dt">header=</span>T, <span class="dt">sep=</span><span class="st">&#39;,&#39;</span>)</a>
+<a class="sourceLine" id="cb28-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb28-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb28-4" data-line-number="4">Fourmis <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(Site, Conditions) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summarise</span>(<span class="kw">n</span>())</a></code></pre></div>
 <pre><code>## # A tibble: 8 x 3
 ## # Groups:   Site [4]
 ##   Site  Conditions `n()`
@@ -674,14 +694,14 @@ Le but de l’étude présentée est d’étudier la diversité des fourmis sur 
 ## 6 GPWT  Wet           28
 ## 7 INWT  Dry           13
 ## 8 INWT  Wet            7</code></pre>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1"><span class="kw">ggplot</span>(<span class="dt">data=</span> Fourmis, <span class="kw">aes</span>(<span class="dt">x=</span>Site, <span class="dt">y=</span>Effectifs, <span class="dt">col=</span> Conditions)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_boxplot</span>() </a></code></pre></div>
-<p><img src="glm_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="kw">ggplot</span>(<span class="dt">data=</span> Fourmis, <span class="kw">aes</span>(<span class="dt">x=</span>Weight, <span class="dt">y=</span>Effectifs, <span class="dt">col=</span> Conditions)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>() </a></code></pre></div>
-<p><img src="glm_files/figure-html/unnamed-chunk-3-2.png" width="672" /></p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1">Fourmis <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">log_weight=</span> <span class="kw">log</span>(Weight)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>log_weight, <span class="dt">y=</span>Effectifs, <span class="dt">col=</span> Conditions)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>() </a></code></pre></div>
-<p><img src="glm_files/figure-html/unnamed-chunk-3-3.png" width="672" /></p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1">Fourmis <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">log_weight=</span> <span class="kw">log</span>(Weight), <span class="dt">log_effectif =</span> <span class="kw">log</span>(Effectifs)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>log_weight, <span class="dt">y=</span>log_effectif, <span class="dt">col=</span> Conditions)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>() </a></code></pre></div>
-<p><img src="glm_files/figure-html/unnamed-chunk-3-4.png" width="672" /></p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1"><span class="kw">ggplot</span>(<span class="dt">data=</span> Fourmis, <span class="kw">aes</span>(<span class="dt">x=</span>Site, <span class="dt">y=</span>Effectifs, <span class="dt">col=</span> Conditions)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_boxplot</span>() </a></code></pre></div>
+<p><img src="glm_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1"><span class="kw">ggplot</span>(<span class="dt">data=</span> Fourmis, <span class="kw">aes</span>(<span class="dt">x=</span>Weight, <span class="dt">y=</span>Effectifs, <span class="dt">col=</span> Conditions)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>() </a></code></pre></div>
+<p><img src="glm_files/figure-html/unnamed-chunk-5-2.png" width="672" /></p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1">Fourmis <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">log_weight=</span> <span class="kw">log</span>(Weight)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>log_weight, <span class="dt">y=</span>Effectifs, <span class="dt">col=</span> Conditions)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>() </a></code></pre></div>
+<p><img src="glm_files/figure-html/unnamed-chunk-5-3.png" width="672" /></p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" data-line-number="1">Fourmis <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">log_weight=</span> <span class="kw">log</span>(Weight), <span class="dt">log_effectif =</span> <span class="kw">log</span>(Effectifs)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>log_weight, <span class="dt">y=</span>log_effectif, <span class="dt">col=</span> Conditions)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>() </a></code></pre></div>
+<p><img src="glm_files/figure-html/unnamed-chunk-5-4.png" width="672" /></p>
 On souhaite étudier les variables qui influencent potentiellement le nombre d’espèces de fourmis présentes dans le milieu. A l’aide de graphiques bien choisis, proposer des variables candidates.
 
 <p>Que peut-on dire du plan d’expérience ?</p>
@@ -692,9 +712,9 @@ On souhaite étudier les variables qui influencent potentiellement le nombre d�
 <h4>Effet des conditions de recueil et du site</h4>
 <p>On modélise des comptages par des lois de Poisson</p>
 <p><span class="math display">\[Y_{ijk}  \overset{i.i.d}{\sim} \mathcal{P}(\lambda_{ij} E_{ijk})\]</span></p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1">glmInt &lt;-<span class="st">  </span><span class="kw">glm</span>(Effectifs<span class="op">~</span>Site<span class="op">*</span>Conditions,<span class="dt">offset=</span><span class="kw">log</span>(Weight),</a>
-<a class="sourceLine" id="cb28-2" data-line-number="2">             <span class="dt">family=</span><span class="st">&quot;poisson&quot;</span>, <span class="dt">data=</span>Fourmis )</a>
-<a class="sourceLine" id="cb28-3" data-line-number="3"><span class="kw">summary</span>(glmInt)</a></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" data-line-number="1">glmInt &lt;-<span class="st">  </span><span class="kw">glm</span>(Effectifs<span class="op">~</span>Site<span class="op">*</span>Conditions,<span class="dt">offset=</span><span class="kw">log</span>(Weight),</a>
+<a class="sourceLine" id="cb34-2" data-line-number="2">             <span class="dt">family=</span><span class="st">&quot;poisson&quot;</span>, <span class="dt">data=</span>Fourmis )</a>
+<a class="sourceLine" id="cb34-3" data-line-number="3"><span class="kw">summary</span>(glmInt)</a></code></pre></div>
 <pre><code>## 
 ## Call:
 ## glm(formula = Effectifs ~ Site * Conditions, family = &quot;poisson&quot;, 
@@ -724,7 +744,7 @@ On souhaite étudier les variables qui influencent potentiellement le nombre d�
 ## AIC: 1017.2
 ## 
 ## Number of Fisher Scoring iterations: 4</code></pre>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1"><span class="kw">anova</span>(glmInt)</a></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" data-line-number="1"><span class="kw">anova</span>(glmInt)</a></code></pre></div>
 <pre><code>## Analysis of Deviance Table
 ## 
 ## Model: poisson, link: log
@@ -739,7 +759,7 @@ On souhaite étudier les variables qui influencent potentiellement le nombre d�
 ## Site             3  201.731       166     332.40
 ## Conditions       1    0.000       165     332.40
 ## Site:Conditions  3   30.994       162     301.41</code></pre>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1"><span class="kw">Anova</span>(glmInt)</a></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb38-1" data-line-number="1"><span class="kw">Anova</span>(glmInt)</a></code></pre></div>
 <pre><code>## Analysis of Deviance Table (Type II tests)
 ## 
 ## Response: Effectifs
@@ -752,8 +772,8 @@ On souhaite étudier les variables qui influencent potentiellement le nombre d�
 </div>
 <div id="effectif-attendu" class="section level4">
 <h4>Effectif attendu</h4>
-<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" data-line-number="1"><span class="kw">library</span>(emmeans)</a>
-<a class="sourceLine" id="cb34-2" data-line-number="2"><span class="kw">emmeans</span>(glmInt,pairwise<span class="op">~</span>Site<span class="op">*</span>Conditions,<span class="dt">adjust=</span><span class="st">&quot;bonferroni&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb40-1" data-line-number="1"><span class="kw">library</span>(emmeans)</a>
+<a class="sourceLine" id="cb40-2" data-line-number="2"><span class="kw">emmeans</span>(glmInt,pairwise<span class="op">~</span>Site<span class="op">*</span>Conditions,<span class="dt">adjust=</span><span class="st">&quot;bonferroni&quot;</span>)</a></code></pre></div>
 <pre><code>## $emmeans
 ##  Site Conditions  emmean     SE  df asymp.LCL asymp.UCL
 ##  FLWT Dry         0.4953 0.0497 Inf    0.3979    0.5927
